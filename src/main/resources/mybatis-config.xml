@@ -10,10 +10,20 @@
     </settings>
     <!-- 配置别名 -->
     <typeAliases>
-        <!--<typeAlias type="com.gis.application.model.User" alias="User"/>-->
+        <typeAlias type="whu.sres.model.User" alias="User"/>
+        <typeAlias type="whu.sres.model.Permission" alias="Permission"/>
+        <typeAlias type="whu.sres.model.Role" alias="Role"/>
+        <typeAlias type="whu.sres.model.RolePermission" alias="RolePermission"/>
+        <typeAlias type="whu.sres.model.UserRole" alias="UserRole"/>
+        <typeAlias type="whu.sres.model.Record" alias="Record"/>
     </typeAliases>
     <!-- 配置mapper -->
     <mappers>
-        <!--<mapper resource="com/gis/application/mapper/VirusMapper.xml"/>-->
+        <mapper class="whu.sres.mapper.UserMapper"/>
+        <mapper class="whu.sres.mapper.RolePermissionMapper"/>
+        <mapper class="whu.sres.mapper.PermissionMapper"/>
+        <mapper class="whu.sres.mapper.UserRoleMapper"/>
+        <mapper class="whu.sres.mapper.RoleMapper"/>
+        <mapper class="whu.sres.mapper.MeetingMapper"/>
     </mappers>
 </configuration>

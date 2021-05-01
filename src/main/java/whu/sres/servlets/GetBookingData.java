@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 import whu.sres.util.CommonUtil;
 
 /**
@@ -37,12 +37,12 @@ public class GetBookingData extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        JsonObject result = new JsonObject();
+        /*JsonObject result = new JsonObject();
         response.setCharacterEncoding("UTF-8");
         PrintWriter pt = response.getWriter();
 
 
-        Room r = new Room();
+        Record r = new Record();
         Calendar c = Calendar.getInstance();
 
         Object curDateO = request.getSession().getAttribute("selectedDate");
@@ -60,7 +60,7 @@ public class GetBookingData extends HttpServlet {
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        ArrayList<Room> rooms = r.getRoomByDate(c.getTime());
+        ArrayList<Record> rooms = r.getRoomByDate(c.getTime());
         result.addProperty("currentDate", sdf.format(c.getTime()));
         result.addProperty("dayOfWeek", CommonUtil.getDay(c.get(Calendar.DAY_OF_WEEK)));
         Gson gson = new Gson();
@@ -71,7 +71,7 @@ public class GetBookingData extends HttpServlet {
         pt.write(result.toString());
         System.out.println(" reuslt: " + result.toString());
         pt.flush();
-        pt.close();
+        pt.close();*/
     }
 
     /**

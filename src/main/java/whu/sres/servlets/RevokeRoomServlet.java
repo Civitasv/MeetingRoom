@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import com.google.gson.JsonObject;
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 
 /**
  * Servlet implementation class RevokeRoomServlet
@@ -32,7 +32,7 @@ public class RevokeRoomServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		JsonObject result = new JsonObject();
+		/*JsonObject result = new JsonObject();
 		response.setCharacterEncoding("UTF-8");
 				
         Object uidO = request.getSession().getAttribute("userID");
@@ -47,7 +47,7 @@ public class RevokeRoomServlet extends HttpServlet {
         //Revoke a room.
         System.out.println("going to revoke");
         String rowId = request.getParameter("rowID");
-        Room r = new Room();
+        Record r = new Record();
         		
         if(r.deleteRecord(rowId)) {
         	result.addProperty("revokeState", 1);
@@ -60,7 +60,7 @@ public class RevokeRoomServlet extends HttpServlet {
 		pt.write(result.toString());
 		System.out.println("reuslt: " + result.toString());
 		pt.flush();
-		pt.close();
+		pt.close();*/
 	}
 
 	/**

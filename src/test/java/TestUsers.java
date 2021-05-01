@@ -8,7 +8,7 @@ import whu.sres.model.User;
 
 
 public class TestUsers {
-	private User u;
+	/*private User u;
 	
 	@Before
 	public void init() {
@@ -46,4 +46,5 @@ public class TestUsers {
 	public void destroy() {
 		u.close();
 	}
+*/
 }

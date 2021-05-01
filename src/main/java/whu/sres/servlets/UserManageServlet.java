@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 
 /**
  * Servlet implementation class UserManageServlet
@@ -35,7 +35,7 @@ public class UserManageServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		JsonObject result = new JsonObject();
+		/*JsonObject result = new JsonObject();
 		response.setCharacterEncoding("UTF-8");
 		
 		
@@ -62,15 +62,15 @@ public class UserManageServlet extends HttpServlet {
         		result.addProperty("uid", uid);
                 result.addProperty("role", role);
         	}else if(serviceNum == 1 || serviceNum == 2){
-        		Room r = new Room();
-        		ArrayList<Room>  rooms= r.getRoomByRoomUserCanCancel(uid);//search the rooms that can be revoked.
+        		Record r = new Record();
+        		ArrayList<Record>  rooms= r.getRoomByRoomUserCanCancel(uid);//search the rooms that can be revoked.
         		if(serviceNum == 2) {
         			//history bookings.
         			rooms= r.getRoomByRoomUser(uid);
         		}
         		
         		JsonArray arr = new JsonArray();
-        		for(Room rm:rooms) {
+        		for(Record rm:rooms) {
         			JsonObject o = new JsonObject();
         			o.addProperty("date", rm.getDateStr());
         			o.addProperty("room", rm.getRoom());
@@ -95,7 +95,7 @@ public class UserManageServlet extends HttpServlet {
         		
         		System.out.println("going to revoke" +rowId);
         		
-        		Room r = new Room();
+        		Record r = new Record();
         		
         		if(r.deleteRecord(rowId)) {
         			result.addProperty("revokeState", 1);
@@ -117,7 +117,7 @@ public class UserManageServlet extends HttpServlet {
 		System.out.println("reuslt: " + result.toString());
 		pt.flush();
 		pt.close();
-
+*/
 	}
 
 	/**

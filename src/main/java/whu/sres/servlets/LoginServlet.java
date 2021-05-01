@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		
-		//Get the user name and password 
+		/*//Get the user name and password
 		String userID = request.getParameter("userName");
 		String password = request.getParameter("password");
 		//System.out.println("name:" + userID + "password: " + password);
@@ -85,7 +85,7 @@ public class LoginServlet extends HttpServlet {
 		System.out.println("login reuslt: "+result.toString());
 		pt.flush();
 		pt.close();
-		u.close();
+		u.close();*/
 		
 	}
 

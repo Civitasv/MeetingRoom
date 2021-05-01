@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="whu.sres.mapper.PermissionMapper">
+    <resultMap id="base" type="Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="permission" column="permission"/>
+        <result property="url" column="url"/>
+    </resultMap>
+
+    <resultMap id="all" type="Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="permission" column="permission"/>
+        <result property="url" column="url"/>
+        <collection property="roles" column="id"
+                    select="whu.sres.mapper.RoleMapper.getRoleByPermissionId"/>
+    </resultMap>
+
+    <select id="getPermissionByRoleId" resultMap="base">
+        select id, name, permission, url
+        from permission p,
+             role_permission rp
+        where p.id = rp.permission_id
+          and rp.role_id = #{roleId}
+    </select>
+</mapper>

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 import whu.sres.util.CommonUtil;
 
 /**
@@ -40,13 +40,13 @@ public class ChangeDate extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Object selectedDateO = request.getParameter("selectedDate");
+       /* Object selectedDateO = request.getParameter("selectedDate");
         Object changedDayO = request.getParameter("changedDay");
 
         JsonObject result = new JsonObject();
         response.setCharacterEncoding("UTF-8");
         PrintWriter pt = response.getWriter();
-        Room r = new Room();
+        Record r = new Record();
 
         Calendar c = Calendar.getInstance();
         Date todayDate = new Date();
@@ -71,7 +71,7 @@ public class ChangeDate extends HttpServlet {
                 }
 
                 Date curDate = c.getTime();
-                List<Room> rooms = r.getRoomByDate(curDate);
+                List<Record> rooms = r.getRoomByDate(curDate);
                 result.addProperty("currentDate", sdf.format(curDate));
                 result.addProperty("dayOfWeek", CommonUtil.getDay(c.get(Calendar.DAY_OF_WEEK)));
                 result.addProperty("records", gson.toJson(rooms));
@@ -83,7 +83,7 @@ public class ChangeDate extends HttpServlet {
         } else {// change date by selected date.
 
             String strDate = (String) selectedDateO;
-            ArrayList<Room> rooms = r.getRoomByDate(strDate);
+            ArrayList<Record> rooms = r.getRoomByDate(strDate);
 
 
             try {
@@ -107,7 +107,7 @@ public class ChangeDate extends HttpServlet {
         pt.write(result.toString());
         System.out.println(" changed reuslt: " + result.toString());
         pt.flush();
-        pt.close();
+        pt.close();*/
     }
 
     /**

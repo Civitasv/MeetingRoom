@@ -37,7 +37,7 @@ public class UserInfoServlet extends HttpServlet {
 		 * service = 0; get the personal information.
 		 * service = 1; modify the personal information except its password.
 		 * service = 2; modify the personal information including its password. 
-		 */
+		 *//*
 		JsonObject result = new JsonObject();
 		response.setCharacterEncoding("UTF-8");
 		
@@ -109,7 +109,7 @@ public class UserInfoServlet extends HttpServlet {
 		pt.write(result.toString());
 		System.out.println("reuslt: " + result.toString());
 		pt.flush();
-		pt.close();
+		pt.close();*/
 		
 	}
 

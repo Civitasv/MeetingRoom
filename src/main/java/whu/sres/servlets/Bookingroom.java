@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import com.google.gson.JsonObject;
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 
 /**
  * Servlet implementation class Bookingroom
@@ -32,7 +32,7 @@ public class Bookingroom extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String  bookingDate = request.getParameter("bookingDate");
+		/*String  bookingDate = request.getParameter("bookingDate");
 		String  bookingRoom = request.getParameter("bookingRoom");
 		String  startTime = request.getParameter("startTime");
 		String endTime = request.getParameter("endTime");
@@ -48,7 +48,7 @@ public class Bookingroom extends HttpServlet {
 		String user = (String) request.getSession().getAttribute("yh");
 		String userID = (String) request.getSession().getAttribute("userID");
 
-		Room r = new Room(bookingDate,bookingRoom,startTime,endTime,user,"1",phoneNum,userID,actualUser);
+		Record r = new Record(bookingDate,bookingRoom,startTime,endTime,user,"1",phoneNum,userID,actualUser);
 		boolean res = r.insertRoom();
 		
 		if(res) {//succeed.
@@ -60,7 +60,7 @@ public class Bookingroom extends HttpServlet {
 		pt.write(result.toString());
 		System.out.println("booking reuslt: "+result.toString());
 		pt.flush();
-		pt.close();
+		pt.close();*/
 		
 	}
 

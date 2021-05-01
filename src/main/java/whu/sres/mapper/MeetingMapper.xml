@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="whu.sres.mapper.MeetingMapper">
+    <resultMap id="withUser" type="Record">
+        <id property="id" column="id"/>
+        <result property="timestamp" column="date"/>
+        <result property="room" column="room"/>
+        <result property="state" column="state"/>
+        <result property="start" column="start"/>
+        <result property="end" column="end"/>
+        <association property="user" column="user_id" select="whu.sres.mapper.UserMapper.getByUserId"/>
+    </resultMap>
+    <select id="get" resultMap="withUser">
+        select *
+        from book_record
+        where id = #{id}
+    </select>
+
+    <select id="getRecordByTimestamp" resultMap="withUser">
+        select *
+        from book_record
+        where date = #{timestamp}
+    </select>
+
+    <insert id="add">
+        insert into book_record(date, room, user_id, state, start, end)
+        values (#{timestamp}, #{room}, #{user_id}, #{state}, #{start}, #{end})
+    </insert>
+
+    <delete id="delete">
+        delete
+        from book_record
+        where id = #{id}
+    </delete>
+
+    <update id="update">
+        update book_record
+        set date    = #{timstamp},
+            room    = #{room},
+            user_id = #{user_id},
+            state   = #{state},
+            start   = #{start},
+            end     = #{end}
+        where id = #{id}
+    </update>
+
+    <select id="getRecordByRoomAndTimestamp" resultMap="withUser">
+        select *
+        from book_record
+        where room = #{room}
+          and date = #{timestamp}
+    </select>
+
+    <select id="getRecordByUserId" resultMap="withUser">
+        select *
+        from book_record
+        where user_id = #{userId}
+    </select>
+
+</mapper>

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import whu.sres.model.Room;
+import whu.sres.model.Record;
 import whu.sres.util.CommonUtil;
 
 /**
@@ -40,10 +40,10 @@ public class Prebook extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		JsonObject result = new JsonObject();
+		/*JsonObject result = new JsonObject();
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter pt = response.getWriter();
-		Room r = new Room();
+		Record r = new Record();
 
 		Calendar c = Calendar.getInstance();
 
@@ -86,7 +86,7 @@ public class Prebook extends HttpServlet {
 		pt.write(result.toString());
 		System.out.println(" prebook reuslt: " + result.toString());
 		pt.flush();
-		pt.close();
+		pt.close();*/
 
 	}
 

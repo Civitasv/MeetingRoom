@@ -42,7 +42,7 @@ public class AddUserServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=utf-8");
+        /*response.setContentType("text/html;charset=utf-8");
         response.setCharacterEncoding("utf-8");
         PrintWriter out = response.getWriter();
 
@@ -73,7 +73,7 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
         if (tel == null || tel.trim().equals("")) {
-            out.println(" <script>alert('?´Â???????');window.location.href = 'userAdd.jsp'</script>");
+            out.println(" <script>alert('?ï¿½ï¿½???????');window.location.href = 'userAdd.jsp'</script>");
             out.flush();
             return;
         }
@@ -94,7 +94,7 @@ public class AddUserServlet extends HttpServlet {
             out.println(" <script>alert('??????????????????????????');window.location.href = 'usermanage.jsp'</script>");
             out.flush();
             out.close();
-        }
+        }*/
     }
 
     /**
