@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资环院会议室预订系统</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker3.standalone.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+<div class="container-fluid mr_container">
+    <!-- logo -->
+    <a href="http://sres.whu.edu.cn">
+        <div id="logo"></div>
+    </a>
+    <!--header -->
+    <div style="margin: 0.8rem 0">
+        <div class="row mt_header">
+            <div class="col-md-2 mr_header_col ">
+                <h6>会议室预订系统</h6>
+
+            </div>
+            <div class="col-md-4 mr_header_col">
+                <form class="form-inline">
+                    <input type="text" class="form-control " name="setDate"
+                           id="selectDate"
+                           placeholder="选择日期">
+                    <button type="button" class="btn-search" id="btnSelectDate"></button>
+                </form>
+            </div>
+            <div class="col-md-4 mr_header_col">
+                <form class="form-inline">
+                    <select name="setRoom" class="form-control" id="selected_room"
+                            placeholder="请选择会议室">
+                        <option value="220">220</option>
+                        <option value="301">301</option>
+                        <option value="319">313</option>
+                        <option value="320">320</option>
+                        <option value="504">504</option>
+                        <option value="429">电脑城429</option>
+                        <option value="430">电脑城430</option>
+                        <option value="431">电脑城431</option>
+                    </select>
+                    <button type="button" id="btn_select_room" class="btn-search"></button>
+                </form>
+
+            </div>
+            <div class="col-md-2 mr_header_col">
+                <div id="userLabel" class="hidden"></div>
+                <button type="button" class="btn user" data-toggle="modal"
+                        data-target="#loginModal" id="btnLogin">登录
+                </button>
+                <button type="button" class="btn hidden user" id="btnLogout">退出</button>
+                <a href="help.html" style="margin-left:1em">帮助</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- content -->
+    <div id="content">
+        <center>
+            <h4 id="today">2017-08-24,星期五</h4>
+        </center>
+        <div class="row switch-day top">
+            <div class="col-md-4">
+                <a href="#" class="btn previousDay">前一天</a>
+            </div>
+            <div class="col-md-4">
+                <a href="# " class="btn today">查看今天</a>
+            </div>
+            <div class="col-md-4">
+                <a href="# " class="btn nextDay">后一天</a>
+            </div>
+        </div>
+        <table
+                class="table table-bordered table-striped table-sm table-hover table_content">
+            <thead>
+            <tr>
+                <th>时间</th>
+                <th>220会议室(80人)</th>
+                <th>301会议室(40人)</th>
+                <th>313会议室(15人)</th>
+                <th>320会议室(30人)</th>
+                <th>504会议室(30人)</th>
+                <th>电脑城429(50人)</th>
+                <th>电脑城430(30人)</th>
+                <th>电脑城431(15人)</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <div class="row switch-day bottom">
+            <div class="col-md-4">
+                <a href="# " class="btn previousDay">前一天</a>
+            </div>
+            <div class="col-md-4">
+                <a href="# " class="btn today">查看今天</a>
+            </div>
+            <div class="col-md-4">
+                <a href="# " class="btn nextDay">后一天</a>
+            </div>
+        </div>
+    </div>
+    <!-- login modal-->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog"
+         aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">用户登录</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="userName" class="form-control-label">用户名:</label> <input
+                                type="text" class="form-control" id="userName"
+                                placeholder="请输入用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="form-control-label">密码:</label> <input
+                                type="password" class="form-control" id="password"
+                                placeholder="请输入密码">
+                        </div>
+                    </form>
+                    <div id="logLabel" class="hidden alert alert-danger"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" id="loginBtn" class="btn btn-primary">登录</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- booking modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog"
+         aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">会议室预订</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="bookingDate" class="col-sm-3 col-form-label">日期:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="bookingDate">
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label for="bookingRoom" class="col-sm-3 col-form-label">会议室:</label>
+                            <div class="col-sm-4">
+                                <select style="width: 100%;" class="form-control"
+                                        id="bookingRoom">
+                                    <option value="220">220</option>
+                                    <option value="301">301</option>
+                                    <option value="319">313</option>
+                                    <option value="320">320</option>
+                                    <option value="504">504</option>
+                                    <option value="429">电脑城429</option>
+                                    <option value="430">电脑城430</option>
+                                    <option value="431">电脑城431</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="startTime" class="col-sm-3 col-form-label">开始时间:</label>
+                            <div class="col-sm-4">
+                                <div class="input-group spinner">
+                                    <input type="text" class="form-control" value="" min="420"
+                                           max="1320" id="startTime">
+                                    <div class="input-group-btn-vertical">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="endTime" class="col-sm-3 col-form-label">结束时间:</label>
+                            <div class="col-sm-4">
+                                <div class="input-group spinner">
+                                    <input type="text" class="form-control" value="" min="450"
+                                           max="1350" id="endTime">
+                                    <div class="input-group-btn-vertical">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button class="btn btn-default" type="button">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="actualUser" class="col-sm-3 col-form-label">联系人:</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="actualUser">
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <label for="phoneNum" class="col-sm-3 col-form-label">电话:</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="phoneNum">
+                            </div>
+
+                        </div>
+                    </form>
+                    <table class="table table-bordered table-striped table-sm">
+                        <caption>红色表示该时间段不可用；表格中时间表示结束时间，如：8:00指 7:30-8:00时间段。</caption>
+                        <tr>
+                            <th>上午</th>
+                            <td id="1">7:30</td>
+                            <td id="2">8:00</td>
+                            <td id="3">8:30</td>
+                            <td id="4">9:00</td>
+                            <td id="5">9:30</td>
+                            <td id="6">10:00</td>
+                            <td id="7">10:30</td>
+                            <td id="8">11:00</td>
+                            <td id="9">11:30</td>
+                            <td id="10">12:00</td>
+                        </tr>
+                        <tr>
+                            <th>下午</th>
+                            <td id="11">12:30</td>
+                            <td id="12">13:00</td>
+                            <td id="13">13:30</td>
+                            <td id="14">14:00</td>
+                            <td id="15">14:30</td>
+                            <td id="16">15:00</td>
+                            <td id="17">15:30</td>
+                            <td id="18">16:00</td>
+                            <td id="19">16:30</td>
+                            <td id="20">17:00</td>
+                            <td id="21">17:30</td>
+                        </tr>
+                        <tr>
+                            <th>晚上</th>
+                            <td id="22">18:00</td>
+                            <td id="23">18:30</td>
+                            <td id="24">19:00</td>
+                            <td id="25">19:30</td>
+                            <td id="26">20:00</td>
+                            <td id="27">20:30</td>
+                            <td id="28">21:00</td>
+                            <td id="29">21:30</td>
+                            <td id="30">22:00</td>
+                            <td id="31">22:30</td>
+                        </tr>
+                    </table>
+                    <div id="bookingMsg" class="alert alert-info"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" id="bookingBtn" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--footer -->
+    <!--
+    <div id="copyright" class="copyright">
+<span><i class="fa fa-copyright">2017 武汉大学 资源与环境科学学院</i></span>
+</div>
+-->
+</div>
+<script th:src="@{/scripts/jquery-3.2.1.js}"></script>
+<script th:src="@{/scripts/popper.js}"></script>
+<script th:src="@{/scripts/bootstrap.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/index.js}"></script>
+</body>
+
+</html>

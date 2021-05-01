@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>资环院会议室预订系统</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/tether.min.css}">
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+
+<body>
+
+<nav
+        class="navbar navbar-expand-sm navbar-toggleable-md navbar-light bg-faded"
+        style="background-color: #e3f2fd">
+    <button class="navbar-toggler navbar-toggler-right" type="button"
+            data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="index.html">系统首页</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-2">
+            <li class="nav-item dropdown"><a
+                    class="nav-link dropdown-toggle" href="#"
+                    id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"> 预订记录 </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item nav-link" id="revokeMR" href="#">撤销会议室</a>
+                    <a class="dropdown-item nav-link" id="historyMR" href="#">历史预订记录</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown"><a
+                    class="nav-link dropdown-toggle" href="#"
+                    id="navbarDropdownMenuProfile" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"> 个人信息管理 </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuProfile">
+                    <a class="dropdown-item" href="#" id="editUserInfo">信息修改</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown hidden"><a
+                    class="nav-link dropdown-toggle" href="#"
+                    id="navbarDropdownMenuAdmin" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"> 管理员 </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAdmin">
+                    <a class="dropdown-item" href="#">用户添加</a> <a
+                        class="dropdown-item" href="#">用户删除</a> <a class="dropdown-item"
+                                                                   href="#">用户信息修改</a> <a class="dropdown-item"
+                                                                                          href="#">撤销会议室</a>
+                    <a class="dropdown-item hidden" id="examineHMR" href="#">审核会议室</a>
+
+                </div>
+            </li>
+
+            <li class="nav-item"><a class="nav-link" href="#" id="logout"
+                                    style="float: right">退出</a></li>
+
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid" style="margin-top: 20px;">
+    <div id="result">
+        <table id="ERTable"
+               class="table table-bordered table-striped table-sm table_content hidden">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>日期</th>
+                <th>用户</th>
+                <th>房间</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>实际借用人</th>
+                <th>电话</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <table id="HTable"
+               class="table table-bordered table-striped table-sm table_content hidden">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>日期</th>
+                <th>用户</th>
+                <th>房间</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>实际借用人</th>
+                <th>电话</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- show booking history or revoke booked room -->
+
+    <div id="editPersonInfo" class="hidden divcenter">
+
+        <form class="form-horizontal">
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="userID">用户ID：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="userID" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="userName">用户名：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="userName" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="role">角色：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="role" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="phone">电话：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="phone">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1"></label>
+                <div class="col-md-2">
+                    <div class="checkbox">
+                        <label> <input type="checkbox" id="chkChgPwd">是否修改密码
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row hidden" id="newPwd1Con">
+
+                <label class="col-md-1 control-label" for="newPwd1">新密码：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="password" id="newPwd1">
+                </div>
+            </div>
+            <div class="form-group row hidden" id="newPwd2Con">
+
+                <label class="col-md-1 control-label" for="newPwd2">重复新密码：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="password" id="newPwd2">
+                </div>
+            </div>
+            <div class="form-group row">
+
+                <label class="col-md-1 control-label" for="oldPwd">旧密码：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="password" id="oldPwd">
+                </div>
+            </div>
+
+            <div class="row hidden" id="infoLabelCon">
+                <label class="col-md-1"></label>
+                <div class="col-md-2 has-error">
+                    <label id="infoLabel"></label>
+                </div>
+
+            </div>
+
+        </form>
+        <div class="row">
+            <label class="col-md-1"></label>
+            <div class="col-md-1">
+                <button class="btn" id="btnModify">提交</button>
+            </div>
+
+            <div class="col-md-1">
+                <button class="btn" id="btnCancel">取消</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/scripts/jquery-3.2.1.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/popper.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/tether.min.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/bootstrap.js}"></script>
+<!--<script type="text/javascript" th:src="@{/scripts/userManage.js}"></script>-->
+</body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 驼峰命名-->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <!-- 配置别名 -->
+    <typeAliases>
+        <!--<typeAlias type="com.gis.application.model.User" alias="User"/>-->
+    </typeAliases>
+    <!-- 配置mapper -->
+    <mappers>
+        <!--<mapper resource="com/gis/application/mapper/VirusMapper.xml"/>-->
+    </mappers>
+</configuration>

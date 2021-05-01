@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>资环院会议室预订系统</title>
+
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <style>
+        body {
+            background-color: #eee;
+            width: 100%;
+        }
+
+        .center {
+            margin: auto;
+            width: 90%;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div style="text-align:center; margin-top:2rem;">
+    <h2>
+        <strong><span style="font-family:'Microsoft YaHei';line-height:2;"><a href="index.html">会议室预订系统</a>  使用说明</span></strong>
+    </h2>
+</div>
+
+<div class="container center">
+    <div class="row center">
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-8 center">
+            <table class="table table-sm table-bordered">
+                <tbody>
+                <tr>
+                    <th>
+                        系统名称：
+                    </th>
+                    <td>
+                        资源与环境学院会议室预订系统
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        版本号：
+                    </th>
+                    <td>
+                        2.0.1
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        开发人员：
+                    </th>
+                    <td>
+                        田沁 毛炎 饶锦蒙
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        联系方式：
+                    </th>
+                    <td>
+                        <a href="mailto:1010318417@qq.com">1010318417@qq.com</a></br>
+                        <a href="mailto:phantask@qq.com">phantask@qq.com</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        更新说明：
+                    </th>
+                    <td>
+                        <ul>
+                            <li class="list-unstyled">
+                                1.预订时间更加细化，可以只预订半个小时，最短预订时间不再只能半天；
+                            </li>
+                            <li class="list-unstyled">
+                                2.预订流程进行了简化，尽可能减少了一些不必要的步骤；
+                            </li>
+                            <li class="list-unstyled">
+                                3.界面进行了一定程度上的优化；
+                            </li>
+                            <li class="list-unstyled">
+                                4.本系统暂<span style="color:#e00;"><strong>不支持IE浏览器</strong></span>，谷歌浏览器和火狐浏览器均已通过测试。
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <hr/>
+    <div class="row center">
+        <div class="col-6">
+            <h4>预订流程</h4>
+            <ul>
+                <li>
+                    1.登录系统后，<strong>双击</strong>会议室和时间段对应的<strong>空格</strong>开始预订；
+                </li>
+                <li>
+                    2.在预订页面填写联系人信息提交即可完成预订操作；
+                </li>
+                <li>
+                    3.在主页面点击自己的名字，可以进入个人管理页面，可以<strong>撤销会议室</strong>，查看<strong>历史预订记录</strong>；
+                </li>
+
+            </ul>
+        </div>
+        <div class="col-1">
+
+        </div>
+        <div class="col-5">
+            <h4>情况说明</h4>
+            <ul>
+                <li>
+                    1. 220, 313, 320会议室钥匙请联系321办公室张老师；
+                </li>
+                <li>
+                    2. 504会议室的钥匙请联系5楼打印室王老师；
+                </li>
+                <li>
+                    3. 301会议室的钥匙请联系321办公室魏老师；<strong>借用301会议室时网上预订后请马上联系321魏老师审批</strong>；
+                </li>
+                <li>
+                    4. 学院保留特殊情况时临时征用各会议室的权利。
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+
+</div>
+
+<div>
+
+</div>
+
+<br/>
+<div style="text-align:center">
+
+    <figure class="figure">
+        <img th:src="@{/images/help-home.png}" class="figure-img img-fluid" style="width:1024px; height:768px;"/>
+        <figcaption class="figure-caption">系统主页面</figcaption>
+    </figure>
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-bookingdialog.png}" class="figure-img img-fluid"
+             style="width:600px;height:800px;"/>
+        <figcaption class="figure-caption">预订页面</figcaption>
+    </figure>
+
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-cancel.png}" class="figure-img img-fluid" style="width:900px;height:400px;"/>
+        <figcaption class="figure-caption">撤销会议室</figcaption>
+    </figure>
+
+</div>
+
+
+<script th:src="@{/scripts/jquery-3.2.1.js}"></script>
+<script th:src="@{/scripts/popper.js}"></script>
+<script th:src="@{/scripts/bootstrap.js}"></script>
+</body>
+
+</html>

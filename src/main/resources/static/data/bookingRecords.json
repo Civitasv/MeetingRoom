@@ -1,0 +1,8 @@
+{
+	"todayDate":"2017-08-28",
+	"records":[
+		{"userName":"用户1","recordId":"1125","actualUser":"真实用户1","phoneNum":"13647234456","record":["22001"]},
+		{"userName":"用户2","recordId":"1125","actualUser":"真实用户2","phoneNum":"13647234456","record":["31904","31905","31906"]},
+		{"userName":"用户3","recordId":"1125","actualUser":"真实用户3","phoneNum":"13647234456","record":["32011","32012"]}
+	]
+}

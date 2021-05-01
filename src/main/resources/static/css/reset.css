@@ -1,0 +1,22 @@
+*, *:before, *:after{
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	box-sizing: border-box;
+	-webkit-text-size:none;
+}
+
+*{
+	margin: 0;
+	padding: 0;
+}
+
+html, body{
+	width: 100%;
+	font-family: "Lucida Grande",Lucida Sans Unicode,Hiragino Sans GB, WenQuanYi Micro Hei, Verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
