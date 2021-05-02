@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import whu.sres.MyApplication;
-import whu.sres.mapper.MeetingMapper;
+import whu.sres.mapper.RecordMapper;
 import whu.sres.mapper.UserMapper;
 
 @RunWith(SpringRunner.class)
@@ -14,7 +14,7 @@ public class MapperTest {
     UserMapper mapper;
 
     @Autowired
-    MeetingMapper meetingMapper;
+    RecordMapper meetingMapper;
 
     @Test
     public void test() {

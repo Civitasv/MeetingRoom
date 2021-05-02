@@ -24,6 +24,6 @@
         <mapper class="whu.sres.mapper.PermissionMapper"/>
         <mapper class="whu.sres.mapper.UserRoleMapper"/>
         <mapper class="whu.sres.mapper.RoleMapper"/>
-        <mapper class="whu.sres.mapper.MeetingMapper"/>
+        <mapper class="whu.sres.mapper.RecordMapper"/>
     </mappers>
 </configuration>

@@ -3,7 +3,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="whu.sres.mapper.MeetingMapper">
+<mapper namespace="whu.sres.mapper.RecordMapper">
     <resultMap id="withUser" type="Record">
         <id property="id" column="id"/>
         <result property="timestamp" column="date"/>
