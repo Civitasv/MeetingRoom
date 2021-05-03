@@ -2,6 +2,7 @@ package whu.sres.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import whu.sres.authority.VerifyToken;
 import whu.sres.handler.Result;
 import whu.sres.handler.ResultCode;
 import whu.sres.model.Record;
@@ -32,6 +33,7 @@ public class RecordController {
         return new Result<List<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 
+    @VerifyToken(url = "/record/book")
     @PostMapping("/book")
     public String addRecord(@RequestBody Record record) {
         int res = recordService.add(record);

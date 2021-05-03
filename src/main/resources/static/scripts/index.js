@@ -4,8 +4,8 @@ const week = ["星期天", "星期一", "星期二", "星期三", "星期四", "
 let chooseDate = 0;
 
 // 如果已经登录
-if (window.localStorage.getItem("login_user")) {
-    $("#userLabel").text(window.localStorage.getItem("login_user")).removeClass(
+if (localStorage.getItem("login_user")) {
+    $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
         'hidden');
     $("#btnLogin").addClass('hidden');
     $('#btnLogout').removeClass(
@@ -89,7 +89,7 @@ const showRecordByTimestamp = function (timestamp) {
 const initTableRoom = function () {
     $('#content table tbody td').empty();
     $('#content table tbody tr').empty().remove();
-    for (let i = 0; i < 32; i++) {
+    for (let i = 0; i < 31; i++) {
         const hm = genTimeByRowId(i);
         const $tr = $('<tr></tr>');
         const rowId = showIntString(i);
@@ -104,7 +104,7 @@ const initTableRoom = function () {
     }
 
     $("#content table td").dblclick(function () {
-        if (!window.localStorage.getItem("login_user")) {
+        if (!localStorage.getItem("login_user")) {
             $("#loginModal").modal('show');
             return;
         }
@@ -151,7 +151,7 @@ const displayRecords = function (records) {
         const extra = 7 * 60 * 60; // 开始时间：7:00
         const first = (start - time - extra) / 1800; // 开始id
         const last = (end - time - extra) / 1800; // 结束id
-        const len = (end - start) / 1800 + 1;
+        const len = (end - start) / 1800;
         const dataContent = "<h6>联系人:<b>" + records[i].realUser
             + "</b> </h6>   <h6>电   话:<b>" + phone
             + "</b></h6>";
@@ -214,9 +214,9 @@ $('#loginBtn').click(() => {
         // 获取user
         const user = data.user;
         // 将token和username存入localStorage
-        window.localStorage.setItem("JWT_TOKEN", token);
-        window.localStorage.setItem("login_user", user.name);
-        window.localStorage.setItem("login_user_id", user.id);
+        localStorage.setItem("JWT_TOKEN", token);
+        localStorage.setItem("login_user", user.name);
+        localStorage.setItem("login_user_id", user.id);
         $("#userLabel").text(user.name).removeClass(
             'hidden');
         $("#btnLogin").addClass('hidden');
@@ -276,7 +276,7 @@ $('#bookingBtn').click(() => {
     const endTimestamp = time2num(endTime);
     const timestamp = dateStringToTimestamp($("#bookingDate").val());
     const room = $("#bookingRoom option:selected").attr("value");
-    const userId = window.localStorage.getItem("login_user_id");
+    const userId = localStorage.getItem("login_user_id");
     const a = /^(([01]?[0-9])|(2[0-3])):[03]?[0]$/;
     if (!a.test(startTime)) {
         $('#bookingMsg').removeClass('hidden').empty()
@@ -343,11 +343,12 @@ $('#bookingBtn').click(() => {
             phone: phoneNum,
             userId: userId,
             realUser: actualUser
-        })
+        }),
+        headers: {"Authorization": localStorage.getItem('JWT_TOKEN')}
     }).done(function (res) {
         if (res.code !== 201) {
             $('#bookingMsg').removeClass('hidden').empty()
-                .append('<p>抱歉，预订失败，请检查预订的时间段！</p>');
+                .append(`<p>${res.message}</p>`);
             return;
         }
         if (room === '301') {
@@ -409,10 +410,10 @@ $('#bookingDate, #bookingRoom').change(function () {
             const start = item.start;
             const end = item.end;
             const extra = 7 * 60 * 60; // 开始时间：7:00
-            const first = (start - time - extra) / 1800 + 1; // 开始id
-            const last = (end - time - extra) / 1800 + 1; // 结束id
-            for (let i = first; i <= last; i++) {
-                $('#' + i).addClass("bg-danger");
+            const first = (start - time - extra) / 1800; // 开始id
+            const last = (end - time - extra) / 1800; // 结束id
+            for (let i = first; i < last; i++) {
+                $('#' + (i + 1)).addClass("bg-danger");
             }
         })
     }).fail(function () {
@@ -424,9 +425,9 @@ $("#btnLogout").click(function () {
     $('#userLabel').empty().addClass('hidden');
     $('#btnLogin').removeClass('hidden');
     $('#btnLogout').addClass('hidden');
-    window.localStorage.removeItem("JWT_TOKEN");
-    window.localStorage.removeItem("login_user");
-    window.localStorage.removeItem("login_user_id");
+    localStorage.removeItem("JWT_TOKEN");
+    localStorage.removeItem("login_user");
+    localStorage.removeItem("login_user_id");
 });
 
 $(function () {

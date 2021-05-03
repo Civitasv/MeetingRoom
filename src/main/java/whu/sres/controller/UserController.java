@@ -59,7 +59,7 @@ public class UserController {
         }
     }
 
-    @VerifyToken
+    @VerifyToken(url = "/user/add")
     @PostMapping("/add")
     public String add(@RequestBody User user) {
         // 密码加密
@@ -73,7 +73,7 @@ public class UserController {
         }
     }
 
-    @VerifyToken(url = "/delete")
+    @VerifyToken(url = "/user/delete")
     @DeleteMapping("/delete")
     public String delete(@RequestParam String id) {
         int res = userService.delete(id);
@@ -84,7 +84,7 @@ public class UserController {
         }
     }
 
-    @VerifyToken(url = "/update")
+    @VerifyToken(url = "/user/update")
     @PutMapping("/update")
     public String update(@RequestBody User user) {
         int res = userService.update(user);
