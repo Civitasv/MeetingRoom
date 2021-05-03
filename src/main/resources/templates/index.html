@@ -30,7 +30,7 @@
 
             </div>
             <div class="col-md-4 mr_header_col">
-                <form class="form-inline">
+                <form class="bookingDate form-inline">
                     <input type="text" class="form-control " name="setDate"
                            id="selectDate"
                            placeholder="选择日期">
@@ -55,7 +55,7 @@
 
             </div>
             <div class="col-md-2 mr_header_col">
-                <div id="userLabel" class="hidden"></div>
+                <span id="userLabel" class="hidden"></span>
                 <button type="button" class="btn user" data-toggle="modal"
                         data-target="#loginModal" id="btnLogin">登录
                 </button>
@@ -67,18 +67,18 @@
 
     <!-- content -->
     <div id="content">
-        <center>
-            <h4 id="today">2017-08-24,星期五</h4>
-        </center>
-        <div class="row switch-day top">
-            <div class="col-md-4">
-                <a href="#" class="btn previousDay">前一天</a>
+        <div style="text-align: center;">
+            <h4 id="today"></h4>
+        </div>
+        <div class="row switch-day top justify-content-between">
+            <div class="col" style="text-align: left;">
+                <button type="button" class="btn btn-link previousDay cursor">前一天</button>
             </div>
-            <div class="col-md-4">
-                <a href="# " class="btn today">查看今天</a>
+            <div class="col" style="text-align: center">
+                <button type="button" class="btn btn-link today cursor">查看今天</button>
             </div>
-            <div class="col-md-4">
-                <a href="# " class="btn nextDay">后一天</a>
+            <div class="col" style="text-align: right">
+                <button type="button" class="btn btn-link nextDay cursor">后一天</button>
             </div>
         </div>
         <table
@@ -100,15 +100,15 @@
 
             </tbody>
         </table>
-        <div class="row switch-day bottom">
-            <div class="col-md-4">
-                <a href="# " class="btn previousDay">前一天</a>
+        <div class="row switch-day bottom justify-content-between">
+            <div class="col" style="text-align: left">
+                <button type="button" class="btn btn-link previousDay cursor">前一天</button>
             </div>
-            <div class="col-md-4">
-                <a href="# " class="btn today">查看今天</a>
+            <div class="col" style="text-align: center">
+                <button type="button" class="btn btn-link today cursor">查看今天</button>
             </div>
-            <div class="col-md-4">
-                <a href="# " class="btn nextDay">后一天</a>
+            <div class="col" style="text-align: right">
+                <button type="button" class="btn btn-link nextDay cursor">后一天</button>
             </div>
         </div>
     </div>
@@ -154,7 +154,7 @@
     <!-- booking modal -->
     <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog"
          aria-labelledby="bookingModalLabel" aria-hidden="true">
-        <div class="modal-dialog " role="dialog">
+        <div class="modal-dialog" role="dialog" style="max-width: 600px">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="bookingModalLabel">会议室预订</h5>
@@ -195,8 +195,8 @@
                             <label for="startTime" class="col-sm-3 col-form-label">开始时间:</label>
                             <div class="col-sm-4">
                                 <div class="input-group spinner">
-                                    <input type="text" class="form-control" value="" min="420"
-                                           max="1320" id="startTime">
+                                    <input type="text" class="form-control" value="7:00" min="420"
+                                           max="1320" id="startTime"/>
                                     <div class="input-group-btn-vertical">
                                         <button class="btn btn-default" type="button">
                                             <i class="fa fa-caret-up"></i>
@@ -214,8 +214,8 @@
                             <label for="endTime" class="col-sm-3 col-form-label">结束时间:</label>
                             <div class="col-sm-4">
                                 <div class="input-group spinner">
-                                    <input type="text" class="form-control" value="" min="450"
-                                           max="1350" id="endTime">
+                                    <input type="text" class="form-control" value="22:30" min="450"
+                                           max="1350" id="endTime"/>
                                     <div class="input-group-btn-vertical">
                                         <button class="btn btn-default" type="button">
                                             <i class="fa fa-caret-up"></i>
@@ -244,46 +244,47 @@
                         </div>
                     </form>
                     <table class="table table-bordered table-striped table-sm">
-                        <caption>红色表示该时间段不可用；表格中时间表示结束时间，如：8:00指 7:30-8:00时间段。</caption>
+                        <caption>红色表示该时间段不可用；表格中时间表示开始时间，如：8:00指 8:00-8:30 时间段。</caption>
                         <tr>
                             <th>上午</th>
-                            <td id="1">7:30</td>
-                            <td id="2">8:00</td>
-                            <td id="3">8:30</td>
-                            <td id="4">9:00</td>
-                            <td id="5">9:30</td>
-                            <td id="6">10:00</td>
-                            <td id="7">10:30</td>
-                            <td id="8">11:00</td>
-                            <td id="9">11:30</td>
-                            <td id="10">12:00</td>
+                            <td id="1">7:00</td>
+                            <td id="2">7:30</td>
+                            <td id="3">8:00</td>
+                            <td id="4">8:30</td>
+                            <td id="5">9:00</td>
+                            <td id="6">9:30</td>
+                            <td id="7">10:00</td>
+                            <td id="8">10:30</td>
+                            <td id="9">11:00</td>
+                            <td id="10">11:30</td>
+                            <td id="11">12:00</td>
                         </tr>
                         <tr>
                             <th>下午</th>
-                            <td id="11">12:30</td>
-                            <td id="12">13:00</td>
-                            <td id="13">13:30</td>
-                            <td id="14">14:00</td>
-                            <td id="15">14:30</td>
-                            <td id="16">15:00</td>
-                            <td id="17">15:30</td>
-                            <td id="18">16:00</td>
-                            <td id="19">16:30</td>
-                            <td id="20">17:00</td>
-                            <td id="21">17:30</td>
+                            <td id="12">12:30</td>
+                            <td id="13">13:00</td>
+                            <td id="14">13:30</td>
+                            <td id="15">14:00</td>
+                            <td id="16">14:30</td>
+                            <td id="17">15:00</td>
+                            <td id="18">15:30</td>
+                            <td id="19">16:00</td>
+                            <td id="20">16:30</td>
+                            <td id="21">17:00</td>
+                            <td id="22">17:30</td>
                         </tr>
                         <tr>
                             <th>晚上</th>
-                            <td id="22">18:00</td>
-                            <td id="23">18:30</td>
-                            <td id="24">19:00</td>
-                            <td id="25">19:30</td>
-                            <td id="26">20:00</td>
-                            <td id="27">20:30</td>
-                            <td id="28">21:00</td>
-                            <td id="29">21:30</td>
-                            <td id="30">22:00</td>
-                            <td id="31">22:30</td>
+                            <td id="23">18:00</td>
+                            <td id="24">18:30</td>
+                            <td id="25">19:00</td>
+                            <td id="26">19:30</td>
+                            <td id="27">20:00</td>
+                            <td id="28">20:30</td>
+                            <td id="29">21:00</td>
+                            <td id="30">21:30</td>
+                            <td id="31">22:00</td>
+                            <td id="32">22:30</td>
                         </tr>
                     </table>
                     <div id="bookingMsg" class="alert alert-info"></div>
@@ -298,11 +299,9 @@
         </div>
     </div>
     <!--footer -->
-    <!--
     <div id="copyright" class="copyright">
-<span><i class="fa fa-copyright">2017 武汉大学 资源与环境科学学院</i></span>
-</div>
--->
+        <span><i class="fa fa-copyright">2021 武汉大学 资源与环境科学学院</i></span>
+    </div>
 </div>
 <script th:src="@{/scripts/jquery-3.2.1.js}"></script>
 <script th:src="@{/scripts/popper.js}"></script>

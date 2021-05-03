@@ -20,13 +20,16 @@ import whu.sres.util.SystemDate;
 
 @Data
 public class Record {
-    private int id;
+    private Integer id;
     // 时间戳
     @SerializedName("date")
-    private int timestamp;
+    private Long timestamp;
     private String room;
-    private int state;
-    private int start;
-    private int end;
+    private Integer state;
+    private Long start;
+    private Long end;
+    private String userId;
     private User user;
+    private String phone;
+    private String realUser;
 }

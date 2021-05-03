@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class Role {
-    private int id;
+    private Integer id;
     // 角色名
     private String role;
     // 具有该角色的所有用户

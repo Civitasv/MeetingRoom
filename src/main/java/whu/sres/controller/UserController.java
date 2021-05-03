@@ -11,6 +11,8 @@ import whu.sres.service.TokenService;
 import whu.sres.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -29,7 +31,6 @@ public class UserController {
         this.tokenService = tokenService;
     }
 
-    @VerifyToken(url = "/login")
     @PostMapping("/login")
     public String login(@RequestBody User requestUser) {
         String username = requestUser.getId();
@@ -39,7 +40,10 @@ public class UserController {
         User user = userService.get(username, encryptPwd);
         if (!Objects.isNull(user)) { // 验证成功，可登录
             String token = tokenService.getToken(user);
-            return new Result<String>().success(true).message("登录成功").code(ResultCode.OK).data(token).toString();
+            Map<String, Object> map = new HashMap<>();
+            map.put("token", token);
+            map.put("user", user);
+            return new Result<Map<String, Object>>().success(true).message("登录成功").code(ResultCode.OK).data(map).toString();
         } else {
             return new Result<String>().success(false).message("登陆失败, 请检查用户名和密码").code(ResultCode.NOT_FOUND).toString();
         }
@@ -58,6 +62,9 @@ public class UserController {
     @VerifyToken
     @PostMapping("/add")
     public String add(@RequestBody User user) {
+        // 密码加密
+        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
+        user.setPassword(encryptPwd);
         int res = userService.add(user);
         if (res != 0) {
             return new Result<String>().success(true).message("成功添加用户！").code(ResultCode.CREATED).toString();

@@ -33,7 +33,7 @@
 
     <insert id="add">
         insert into user
-        values (#{userId}, #{name}, #{phone}, #{password})
+        values (#{id}, #{name}, #{phone}, #{password})
     </insert>
 
     <delete id="delete">

@@ -15,7 +15,7 @@ public interface RecordMapper {
 
     List<Record> getRecordByUserId(String userId);
 
-    int insert(Record record);
+    int add(Record record);
 
     int update(Record record);
 
