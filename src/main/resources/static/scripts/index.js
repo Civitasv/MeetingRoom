@@ -1,16 +1,7 @@
-const base = "http://localhost";
+const base = "http://127.0.0.1";
 const room = [220, 301, 313, 320, 504, 429, 430, 431];
 const week = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 let chooseDate = 0;
-
-// 如果已经登录
-if (localStorage.getItem("login_user")) {
-    $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
-        'hidden');
-    $("#btnLogin").addClass('hidden');
-    $('#btnLogout').removeClass(
-        'hidden');
-}
 
 const dateStringToTimestamp = function (DateString) {
     const dateStr = DateString.replace(/-/g, '/');
@@ -48,6 +39,15 @@ const num2timeStr = function (numInt) {
     }
 }
 
+const logout = function () {
+    $('#userLabel').empty().addClass('hidden');
+    $('#btnLogin').removeClass('hidden');
+    $('#btnLogout').addClass('hidden');
+    localStorage.removeItem("JWT_TOKEN");
+    localStorage.removeItem("login_user");
+    localStorage.removeItem("login_user_id");
+}
+
 const showRecordByTimestamp = function (timestamp) {
     initTableRoom();
     $.ajax({
@@ -69,18 +69,6 @@ const showRecordByTimestamp = function (timestamp) {
         if (records.length > 0) {
             displayRecords(records);
         }
-
-
-        /* const userLabelLink = "<a href=./userManage.html>"
-             + data.userName + "</a>";
-         $("#userLabel").append(
-             userLabelLink).removeClass(
-             'hidden');*/
-        /*$("#btnLogin").addClass('hidden');
-        $('#btnLogout').removeClass(
-            'hidden');
-        $("#loginModal").modal('hide');*/
-
     }).fail(function () {
         console.log("error");
     });
@@ -104,11 +92,27 @@ const initTableRoom = function () {
     }
 
     $("#content table td").dblclick(function () {
-        if (!localStorage.getItem("login_user")) {
-            $("#loginModal").modal('show');
-            return;
-        }
-        $("#bookingModal").modal('show');
+        // 检查token是否过期
+        $.ajax({
+            url: `${base}/token/check`,
+            type: 'GET',
+            async: false,
+            dataType: 'json',
+            headers: {"Authorization": localStorage.getItem('JWT_TOKEN') != null ? localStorage.getItem('JWT_TOKEN') : ""}
+        }).done((res) => {
+            console.log("async2")
+            if (res.code !== 200) {
+                // token已经失效了
+                alert("请重新登录！");
+                logout();
+                $("#loginModal").modal('show');
+                return;
+            }
+            $("#bookingModal").modal('show');
+        }).fail(function () {
+            console.log("error");
+        })
+        console.log("async2")
     });
 }
 
@@ -182,7 +186,7 @@ const displayRecords = function (records) {
     }
 }
 
-$('#loginBtn').click(() => {
+$('#loginBtn').click(async () => {
     // 用户名
     const userId = $("#userName").val();
     const password = $("#password").val();
@@ -191,43 +195,46 @@ $('#loginBtn').click(() => {
             '<p>用户名和密码不能为空！</p>');
         return;
     }
-    $.ajax({
-        url: `${base}/user/login`,
-        type: 'POST',
-        dataType: 'json',
-        contentType: "application/json",
-        data: JSON.stringify({
-            id: userId,
-            password: password
-        })
-    }).done((res) => {
-        if (res.code !== 200) {
-            $('#logLabel')
-                .removeClass('hidden')
-                .empty()
-                .append('<p>用户名或者密码错误！</p>');
-            return;
+    try {
+        const response = await fetch(`${base}/user/login`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            },
+            body: JSON.stringify({
+                id: userId,
+                password: password
+            })
+        });
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                $('#logLabel')
+                    .removeClass('hidden')
+                    .empty()
+                    .append('<p>用户名或者密码错误！</p>');
+                return;
+            }
+            console.log(res);
+            const {access_token, access_token_expiry, user_id, user_name} = res.data;
+            login({access_token, access_token_expiry});
+            localStorage.setItem("login_user", user_name);
+            localStorage.setItem("login_user_id", user_id);
+            startCountdown();
+            $("#userLabel").text(user_name).removeClass(
+                'hidden');
+            $("#btnLogin").addClass('hidden');
+            $('#btnLogout').removeClass(
+                'hidden');
+            $("#loginModal").modal('hide');
+        } else {
+            console.log(response.statusText)
         }
-        const data = res.data;
-        // 获取token
-        const token = data.token;
-        // 获取user
-        const user = data.user;
-        // 将token和username存入localStorage
-        localStorage.setItem("JWT_TOKEN", token);
-        localStorage.setItem("login_user", user.name);
-        localStorage.setItem("login_user_id", user.id);
-        $("#userLabel").text(user.name).removeClass(
-            'hidden');
-        $("#btnLogin").addClass('hidden');
-        $('#btnLogout').removeClass(
-            'hidden');
-        $("#loginModal").modal('hide');
-    }).fail(function () {
-        console.log("error");
-    }).always(function () {
-        console.log("complete");
-    });
+    } catch (e) {
+        console.log(e);
+    }
 });
 
 $("#content .previousDay").click(() => {
@@ -421,14 +428,7 @@ $('#bookingDate, #bookingRoom').change(function () {
     });
 });
 
-$("#btnLogout").click(function () {
-    $('#userLabel').empty().addClass('hidden');
-    $('#btnLogin').removeClass('hidden');
-    $('#btnLogout').addClass('hidden');
-    localStorage.removeItem("JWT_TOKEN");
-    localStorage.removeItem("login_user");
-    localStorage.removeItem("login_user_id");
-});
+$("#btnLogout").click(logout);
 
 $(function () {
     chooseDate = dateStringToTimestamp(formatDateYYYYMMSS(new Date())); // 默认选择今天
@@ -442,4 +442,30 @@ $(function () {
     $('#btn_select_room').click(function () {
         alert("此功能还在开发中，敬请期待！");
     });
+    auth().then(() => {
+        // 刷新是否成功
+        if (inMemoryToken) {
+            // 如果已经登录
+            if (localStorage.getItem("login_user")) {
+                $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
+                    'hidden');
+                $("#btnLogin").addClass('hidden');
+                $('#btnLogout').removeClass(
+                    'hidden');
+            }
+            startCountdown();
+        }
+    }, () => {
+
+    })
+
+    /*window.onbeforeunload = function (e) {
+        e = e || window.event;
+        // 兼容IE8和Firefox 4之前的版本
+        if (e) {
+            e.returnValue = '真的要离开吗';
+        }
+        // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
+        return '真的要离开吗';
+    }*/
 });

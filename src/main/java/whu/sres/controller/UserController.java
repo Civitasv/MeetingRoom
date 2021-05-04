@@ -10,6 +10,8 @@ import whu.sres.model.User;
 import whu.sres.service.TokenService;
 import whu.sres.service.UserService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +34,31 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User requestUser) {
+    public String login(@RequestBody User requestUser, HttpServletResponse response) {
         String username = requestUser.getId();
         String password = requestUser.getPassword();
         // 密码加密
         String encryptPwd = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
         User user = userService.get(username, encryptPwd);
         if (!Objects.isNull(user)) { // 验证成功，可登录
-            String token = tokenService.getToken(user);
+            Map<String, Object> accessTokenInfo = tokenService.getAccessToken(user); // 获得access token
+            Map<String, Object> refreshTokenInfo = tokenService.getRefreshToken(user.getId()); // 获得refresh token
             Map<String, Object> map = new HashMap<>();
-            map.put("token", token);
-            map.put("user", user);
+            map.put("access_token", accessTokenInfo.get("accessToken"));
+            map.put("access_token_expiry", accessTokenInfo.get("accessTokenExpiry"));
+            map.put("user_id", user.getId());
+            map.put("user_name", user.getName());
+
+            // 将 refresh token 加入httponly cookie
+            Cookie cookie = new Cookie("refresh_token", refreshTokenInfo.get("refreshToken").toString());
+            cookie.setMaxAge(Integer.parseInt(refreshTokenInfo.get("refreshTokenMaxAge").toString()));
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+            // 将refresh token 存入数据库
+            user.setRefreshToken(refreshTokenInfo.get("refreshToken").toString());
+            userService.update(user);
+
             return new Result<Map<String, Object>>().success(true).message("登录成功").code(ResultCode.OK).data(map).toString();
         } else {
             return new Result<String>().success(false).message("登陆失败, 请检查用户名和密码").code(ResultCode.NOT_FOUND).toString();

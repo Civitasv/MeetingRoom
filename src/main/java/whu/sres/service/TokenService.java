@@ -3,8 +3,17 @@ package whu.sres.service;
 
 import whu.sres.model.User;
 
-public interface TokenService {
-    String getToken(User user);
+import java.util.List;
+import java.util.Map;
 
-    String getUserIdFromToken(String token);
+public interface TokenService {
+    Map<String, Object> getAccessToken(User user);
+
+    Map<String, Object> getRefreshToken(String userId);
+
+    String getUserIdFromToken(String accessToken);
+
+    List<String> getPermissions(String accessToken);
+
+    boolean isExpire(String accessToken);
 }

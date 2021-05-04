@@ -1,9 +1,5 @@
 package whu.sres.interceptor;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,6 +16,7 @@ import whu.sres.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
@@ -52,31 +49,23 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (verifyToken.required()) {
                 // 执行认证
                 if (token == null) {
-                    throw new CustomException(ResultCode.AUTH_NEED, "未指定token");
+                    throw new CustomException(ResultCode.AUTH_NEED, "请登录后执行该操作");
                 }
                 // 获取 token 中的 username
                 String userId = tokenService.getUserIdFromToken(token);
                 if (userId == null)
-                    throw new CustomException(ResultCode.AUTH_NEED, "无效的token");
-                User user = userService.getByUserId(userId);
-                if (user == null)
-                    throw new CustomException(ResultCode.NOT_FOUND, "用户不存在");
+                    throw new CustomException(ResultCode.AUTH_NEED, "请登录后执行该操作");
                 // 验证 token
-                JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).withAudience(userId).build();
                 try {
-                    jwtVerifier.verify(token);
+                    List<String> permissions = tokenService.getPermissions(token);
                     // 根据用户角色和url，判断该用户是否具有该权限
                     String url = verifyToken.url();
-                    for (Role role : user.getRoles()) {
-                        for (Permission permission : role.getPermissions()) {
-                            if (url.equals(permission.getUrl())) {
-                                return true;
-                            }
-                        }
+                    if (permissions.contains(url)) {
+                        return true;
                     }
-                    throw new CustomException(ResultCode.AUTH_NEED, "用户不具有该权限");
-                } catch (JWTVerificationException e) {
-                    throw new CustomException(ResultCode.NOT_FOUND, "用户名或密码错误");
+                    throw new CustomException(ResultCode.METHOD_NOT_ALLOWED, "用户不具有该权限");
+                } catch (Exception e) {
+                    throw new CustomException(ResultCode.AUTH_NEED, "登录已过期，请重新登录");
                 }
             }
         }

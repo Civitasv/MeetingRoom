@@ -16,4 +16,6 @@ public class User {
     private String name;
     // 角色
     private List<Role> roles;
+    // 刷新token
+    private String refreshToken;
 }
