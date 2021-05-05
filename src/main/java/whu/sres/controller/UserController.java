@@ -65,6 +65,30 @@ public class UserController {
         }
     }
 
+    @GetMapping("logout")
+    public String logout(@CookieValue(value = "refresh_token", defaultValue = "") String refreshToken) {
+        if (refreshToken.isEmpty()) {
+            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+        }
+        if (tokenService.isExpire(refreshToken)) {
+            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+        }
+        // 获取userId
+        String userId = tokenService.getUserIdFromToken(refreshToken);
+        if (Objects.isNull(userId)) {
+            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+        }
+        // 根据userId获取user
+        User user = userService.getByUserId(userId);
+        if (!refreshToken.equals(user.getRefreshToken())) {
+            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+        }
+        // 清除user的refresh token
+        user.setRefreshToken("");
+        userService.update(user);
+        return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+    }
+
     @PostMapping("/repeat")
     public String repeat(@RequestBody String userId) {
         User user = userService.getByUserId(userId);

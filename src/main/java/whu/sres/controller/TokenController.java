@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("token")
@@ -34,14 +35,22 @@ public class TokenController {
     @GetMapping("refresh")
     public String refresh(@CookieValue(value = "refresh_token", defaultValue = "") String refreshToken, HttpServletResponse response) {
         // 验证 refresh token
+        if (refreshToken.isEmpty()) {
+            return new Result<Map<String, Object>>().success(true).message("token不可以为空").code(ResultCode.AUTH_NEED).toString();
+        }
         if (tokenService.isExpire(refreshToken)) {
             return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
         }
         // 获取userId
         String userId = tokenService.getUserIdFromToken(refreshToken);
+        if (Objects.isNull(userId)) {
+            return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
+        }
         // 根据userId获取user
         User user = userService.getByUserId(userId);
-
+        if (!refreshToken.equals(user.getRefreshToken())) {
+            return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
+        }
         // 重新生成 access token 和 refresh token
         Map<String, Object> accessTokenInfo = tokenService.getAccessToken(user); // 获得access token
         Map<String, Object> map = new HashMap<>();

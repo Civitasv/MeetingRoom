@@ -17,9 +17,9 @@ import java.util.*;
 
 @Service
 public class TokenServiceImpl implements TokenService {
-    // access token 过期时间10分钟
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;
-    // refresh token 过期时间30天，意味着用户一个月需要重新登录一次
+    // access token 过期时间15分钟
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 15 * 60 * 1000L;
+    // refresh token 过期时间30天，意味着用户如果一个月都没登录，则需要重新登录一次
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 30 * 24 * 60 * 60 * 1000L;
 
     private static final String KEY = "3EK6FD+o0+c7tzBNVfjpMkNDi2yARAAKzQlk8O2IKoxQu4nF7EdAh8s3TwpHwrdWT6R";

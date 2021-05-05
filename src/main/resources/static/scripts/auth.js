@@ -8,18 +8,15 @@ function login({access_token, access_token_expiry}) {
     };
 }
 
-function showLogin() {
-    $("#loginModal").modal('show');
-}
-
-function userLogout() {
+function logout() {
+    localStorage.removeItem("login_user");
+    localStorage.removeItem("login_user_id");
     inMemoryToken = null; // 将token置空
+    endCountdown(); // 停止倒计时
     localStorage.setItem("logout", Date.now());
-    // 进入登录页面
-    showLogin();
 }
 
-async function auth() {
+async function auth(loginCallback, logoutCallback) {
     if (!inMemoryToken) {
         const url = `${base}/token/refresh`;
         try {
@@ -35,6 +32,10 @@ async function auth() {
                 const res = await response.json();
                 if (res.code !== 200) {
                     console.log("需要重新登录");
+                    if (res.code === 401 && inMemoryToken) {
+                        logout();
+                        logoutCallback();
+                    }
                 } else {
                     const {access_token, access_token_expiry, user_id, user_name} = res.data;
                     login({access_token, access_token_expiry});
@@ -46,13 +47,15 @@ async function auth() {
             }
         } catch (e) {
             console.log(e);
-            showLogin();
+            logout();
+            logoutCallback();
+            loginCallback();
         }
     }
     const access_token = inMemoryToken;
     // We already checked for server. This should only happen on client.
     if (!access_token) {
-        showLogin();
+        loginCallback();
     }
     return access_token
 }
@@ -64,7 +67,6 @@ const addMinutes = function (dt, minutes) {
 const startCountdown = function () {
     interval = setInterval(async () => {
         if (inMemoryToken) {
-            console.log(inMemoryToken);
             if (addMinutes(new Date(), 1) >= new Date(inMemoryToken.expiry)) {
                 inMemoryToken = null;
                 inMemoryToken = await auth();
@@ -73,12 +75,12 @@ const startCountdown = function () {
             inMemoryToken = await auth();
         }
     }, 60000);
-    window.addEventListener("storage", syncLogout);
 }
 
-function syncLogout(event) {
-    if (event.key === 'logout') {
-        console.log('logged out from storage!')
-        showLogin();
-    }
+const onLogout = function (callback) {
+    window.addEventListener("storage", callback);
+}
+
+const endCountdown = function () {
+    clearInterval(interval);
 }

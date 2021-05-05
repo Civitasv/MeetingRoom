@@ -39,15 +39,6 @@ const num2timeStr = function (numInt) {
     }
 }
 
-const logout = function () {
-    $('#userLabel').empty().addClass('hidden');
-    $('#btnLogin').removeClass('hidden');
-    $('#btnLogout').addClass('hidden');
-    localStorage.removeItem("JWT_TOKEN");
-    localStorage.removeItem("login_user");
-    localStorage.removeItem("login_user_id");
-}
-
 const showRecordByTimestamp = function (timestamp) {
     initTableRoom();
     $.ajax({
@@ -92,27 +83,11 @@ const initTableRoom = function () {
     }
 
     $("#content table td").dblclick(function () {
-        // 检查token是否过期
-        $.ajax({
-            url: `${base}/token/check`,
-            type: 'GET',
-            async: false,
-            dataType: 'json',
-            headers: {"Authorization": localStorage.getItem('JWT_TOKEN') != null ? localStorage.getItem('JWT_TOKEN') : ""}
-        }).done((res) => {
-            console.log("async2")
-            if (res.code !== 200) {
-                // token已经失效了
-                alert("请重新登录！");
-                logout();
-                $("#loginModal").modal('show');
-                return;
-            }
+        if (inMemoryToken) {
             $("#bookingModal").modal('show');
-        }).fail(function () {
-            console.log("error");
-        })
-        console.log("async2")
+        } else {
+            $("#loginModal").modal('show');
+        }
     });
 }
 
@@ -351,7 +326,7 @@ $('#bookingBtn').click(() => {
             userId: userId,
             realUser: actualUser
         }),
-        headers: {"Authorization": localStorage.getItem('JWT_TOKEN')}
+        headers: {"Authorization": inMemoryToken["token"]}
     }).done(function (res) {
         if (res.code !== 201) {
             $('#bookingMsg').removeClass('hidden').empty()
@@ -397,7 +372,7 @@ $('.spinner .btn:last-of-type').on('click', function () {
     }
 });
 
-$('#bookingDate, #bookingRoom').change(function () {
+function changeBookingDateOrRoom() {
     const time = dateStringToTimestamp($("#bookingDate").val());
     if (!time) return;
     const room = $("#bookingRoom option:selected").attr("value");
@@ -426,9 +401,19 @@ $('#bookingDate, #bookingRoom').change(function () {
     }).fail(function () {
         console.log("error");
     });
-});
+}
 
-$("#btnLogout").click(logout);
+function syncLogout(event) {
+    if (event.key === 'logout') {
+        console.log('logged out from storage!')
+        $('#userLabel').empty().addClass('hidden');
+        $('#btnLogin').removeClass('hidden');
+        $('#btnLogout').addClass('hidden');
+        inMemoryToken = null; // 将token置空
+        endCountdown(); // 停止倒计时
+        $("#loginModal").modal('show');
+    }
+}
 
 $(function () {
     chooseDate = dateStringToTimestamp(formatDateYYYYMMSS(new Date())); // 默认选择今天
@@ -442,10 +427,23 @@ $(function () {
     $('#btn_select_room').click(function () {
         alert("此功能还在开发中，敬请期待！");
     });
-    auth().then(() => {
+    $("#btnLogout").click(() => {
+        $('#userLabel').empty().addClass('hidden');
+        $('#btnLogin').removeClass('hidden');
+        $('#btnLogout').addClass('hidden');
+        logout();
+    });
+    $('#bookingDate, #bookingRoom').change(changeBookingDateOrRoom);
+    onLogout(syncLogout);
+    auth(() => {
+        $("#loginModal").modal('show');
+    }, () => {
+        $('#userLabel').empty().addClass('hidden');
+        $('#btnLogin').removeClass('hidden');
+        $('#btnLogout').addClass('hidden');
+    }).then(() => {
         // 刷新是否成功
         if (inMemoryToken) {
-            // 如果已经登录
             if (localStorage.getItem("login_user")) {
                 $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
                     'hidden');
@@ -456,16 +454,5 @@ $(function () {
             startCountdown();
         }
     }, () => {
-
     })
-
-    /*window.onbeforeunload = function (e) {
-        e = e || window.event;
-        // 兼容IE8和Firefox 4之前的版本
-        if (e) {
-            e.returnValue = '真的要离开吗';
-        }
-        // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
-        return '真的要离开吗';
-    }*/
 });
