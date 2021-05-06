@@ -8,12 +8,34 @@ function login({access_token, access_token_expiry}) {
     };
 }
 
-function logout() {
-    localStorage.removeItem("login_user");
-    localStorage.removeItem("login_user_id");
+function isLogin() {
+    return localStorage.getItem("login_user") != null;
+}
+
+async function logout() {
+    if (localStorage.getItem("login_user"))
+        localStorage.removeItem("login_user");
+    if (localStorage.getItem("login_user_id"))
+        localStorage.removeItem("login_user_id");
     inMemoryToken = null; // 将token置空
-    endCountdown(); // 停止倒计时
+    if (interval)
+        endCountdown(); // 停止倒计时
     localStorage.setItem("logout", Date.now());
+    const url = `${base}/user/logout`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const res = await response.json();
+            console.log(res.code !== 200 ? "退出失败" : "退出成功");
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 async function auth(loginCallback, logoutCallback) {
@@ -31,9 +53,9 @@ async function auth(loginCallback, logoutCallback) {
             if (response.ok) {
                 const res = await response.json();
                 if (res.code !== 200) {
-                    console.log("需要重新登录");
-                    if (res.code === 401 && inMemoryToken) {
-                        logout();
+                    if (isLogin()) {
+                        console.log("需要重新登录");
+                        await logout();
                         logoutCallback();
                     }
                 } else {
@@ -47,9 +69,11 @@ async function auth(loginCallback, logoutCallback) {
             }
         } catch (e) {
             console.log(e);
-            logout();
-            logoutCallback();
-            loginCallback();
+            if (isLogin()) {
+                await logout();
+                logoutCallback();
+                loginCallback();
+            }
         }
     }
     const access_token = inMemoryToken;

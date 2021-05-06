@@ -48,9 +48,6 @@ public class TokenController {
         }
         // 根据userId获取user
         User user = userService.getByUserId(userId);
-        if (!refreshToken.equals(user.getRefreshToken())) {
-            return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
-        }
         // 重新生成 access token 和 refresh token
         Map<String, Object> accessTokenInfo = tokenService.getAccessToken(user); // 获得access token
         Map<String, Object> map = new HashMap<>();
@@ -66,9 +63,6 @@ public class TokenController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);
-        // 将refresh token 存入数据库
-        user.setRefreshToken(refreshTokenInfo.get("refreshToken").toString());
-        userService.update(user);
 
         return new Result<Map<String, Object>>().success(true).message("刷新成功").code(ResultCode.OK).data(map).toString();
     }

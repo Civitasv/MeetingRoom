@@ -11,11 +11,11 @@ import whu.sres.service.TokenService;
 import whu.sres.service.UserService;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("user")
@@ -55,9 +55,6 @@ public class UserController {
             cookie.setPath("/");
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
-            // 将refresh token 存入数据库
-            user.setRefreshToken(refreshTokenInfo.get("refreshToken").toString());
-            userService.update(user);
 
             return new Result<Map<String, Object>>().success(true).message("登录成功").code(ResultCode.OK).data(map).toString();
         } else {
@@ -66,26 +63,25 @@ public class UserController {
     }
 
     @GetMapping("logout")
-    public String logout(@CookieValue(value = "refresh_token", defaultValue = "") String refreshToken) {
+    public String logout(@CookieValue(value = "refresh_token", defaultValue = "") String refreshToken, HttpServletRequest request, HttpServletResponse response) {
         if (refreshToken.isEmpty()) {
             return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
         }
         if (tokenService.isExpire(refreshToken)) {
             return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
         }
-        // 获取userId
-        String userId = tokenService.getUserIdFromToken(refreshToken);
-        if (Objects.isNull(userId)) {
-            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
+        // 清除token
+        Cookie[] cookies = request.getCookies();
+        Optional<Cookie> cookieOptional = Arrays.stream(cookies)
+                .filter(cookie1 -> "refresh_token".equals(cookie1.getName()))
+                .findFirst();
+        if (cookieOptional.isPresent()) {
+            Cookie cookie = cookieOptional.get();
+            cookie.setMaxAge(0);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            response.addCookie(cookie);
         }
-        // 根据userId获取user
-        User user = userService.getByUserId(userId);
-        if (!refreshToken.equals(user.getRefreshToken())) {
-            return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
-        }
-        // 清除user的refresh token
-        user.setRefreshToken("");
-        userService.update(user);
         return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
     }
 

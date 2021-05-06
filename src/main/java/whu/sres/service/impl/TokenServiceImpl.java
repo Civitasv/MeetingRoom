@@ -83,7 +83,8 @@ public class TokenServiceImpl implements TokenService {
 
     private Claims parseJWT(String accessToken) {
         Key signKey = new SecretKeySpec(DatatypeConverter.parseBase64Binary(KEY), SignatureAlgorithm.HS256.getJcaName());
-        Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(signKey)
+        Jws<Claims> jws = Jwts.parserBuilder()
+                .setSigningKey(signKey)
                 .build()
                 .parseClaimsJws(accessToken);
         return jws.getBody();

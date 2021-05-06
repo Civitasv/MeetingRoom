@@ -1,4 +1,3 @@
-const base = "http://127.0.0.1";
 const room = [220, 301, 313, 320, 504, 429, 430, 431];
 const week = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 let chooseDate = 0;
@@ -403,14 +402,30 @@ function changeBookingDateOrRoom() {
     });
 }
 
-function syncLogout(event) {
+async function syncLogout(event) {
     if (event.key === 'logout') {
         console.log('logged out from storage!')
         $('#userLabel').empty().addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
         inMemoryToken = null; // 将token置空
-        endCountdown(); // 停止倒计时
+        if (interval)
+            endCountdown(); // 停止倒计时
+        const url = `${base}/user/logout`
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            if (response.ok) {
+                const res = await response.json();
+                console.log(res.code !== 200 ? "退出失败" : "退出成功");
+            } else {
+                console.log(response.statusText)
+            }
+        } catch (e) {
+            console.log(e);
+        }
         $("#loginModal").modal('show');
     }
 }
@@ -427,11 +442,11 @@ $(function () {
     $('#btn_select_room').click(function () {
         alert("此功能还在开发中，敬请期待！");
     });
-    $("#btnLogout").click(() => {
+    $("#btnLogout").click(async () => {
         $('#userLabel').empty().addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
-        logout();
+        await logout();
     });
     $('#bookingDate, #bookingRoom').change(changeBookingDateOrRoom);
     onLogout(syncLogout);
