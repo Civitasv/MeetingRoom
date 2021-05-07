@@ -291,7 +291,7 @@ $('#bookingBtn').click(() => {
     }).done(function (res) {
         if (res.code !== 201) {
             $('#bookingMsg').removeClass('hidden').empty()
-                .append(`<p>${res.message}</p>`);
+                .append('<p>预定失败，请检查预约时间段或稍后重试</p>');
             return;
         }
         if (room === '301') {

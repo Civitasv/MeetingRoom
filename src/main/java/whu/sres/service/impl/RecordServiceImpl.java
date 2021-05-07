@@ -49,6 +49,15 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public int add(Record record) {
+        // 检查该预约是否与其它预约冲突
+        List<Record> records = this.getRecordByRoomAndTimestamp(record.getRoom(), record.getTimestamp());
+        for (Record exist : records) {
+            if ((exist.getStart() > record.getStart() && exist.getStart() < record.getEnd())
+                    || (exist.getEnd() > record.getStart() && exist.getEnd() < record.getEnd())
+                    || (exist.getStart() <= record.getStart() && exist.getEnd() >= record.getEnd())) {
+                return -1;
+            }
+        }
         return recordMapper.add(record);
     }
 
