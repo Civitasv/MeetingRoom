@@ -6,14 +6,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import whu.sres.authority.VerifyToken;
 
 @Controller
-@RequestMapping("page")
+@RequestMapping("")
 public class PageController {
     @GetMapping("/help")
     public String help() {
         return "help";
     }
 
-    @VerifyToken(url = "/page/manage")
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
     @GetMapping("/manage")
     public String manage() {
         return "userManage";

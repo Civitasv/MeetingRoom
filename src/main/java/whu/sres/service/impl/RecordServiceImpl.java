@@ -23,18 +23,28 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<Record> getRecordByTimestamp(int timestamp) {
+    public List<Record> getRecordByTimestamp(long timestamp) {
         return recordMapper.getRecordByTimestamp(timestamp);
     }
 
     @Override
-    public List<Record> getRecordByRoomAndTimestamp(String room, int timestamp) {
+    public List<Record> getRecordBeforeStartTimestamp(long timestamp) {
+        return recordMapper.getRecordBeforeStartTimestamp(timestamp);
+    }
+
+    @Override
+    public List<Record> getRecordByRoomAndTimestamp(String room, long timestamp) {
         return recordMapper.getRecordByRoomAndTimestamp(room, timestamp);
     }
 
     @Override
     public List<Record> getRecordByUserId(String userId) {
         return recordMapper.getRecordByUserId(userId);
+    }
+
+    @Override
+    public List<Record> getRecordByState(int state) {
+        return recordMapper.getRecordByState(state);
     }
 
     @Override
@@ -50,5 +60,10 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public int delete(int id) {
         return recordMapper.delete(id);
+    }
+
+    @Override
+    public int updateState(int id, int state) {
+        return recordMapper.updateState(id, state);
     }
 }

@@ -9,15 +9,21 @@ import java.util.List;
 public interface RecordMapper {
     Record get(int id);
 
-    List<Record> getRecordByTimestamp(int timestamp);
+    List<Record> getRecordByTimestamp(long timestamp);
 
-    List<Record> getRecordByRoomAndTimestamp(String room, int timestamp);
+    List<Record> getRecordBeforeStartTimestamp(long timestamp);
+
+    List<Record> getRecordByRoomAndTimestamp(String room, long timestamp);
 
     List<Record> getRecordByUserId(String userId);
+
+    List<Record> getRecordByState(int state);
 
     int add(Record record);
 
     int update(Record record);
+
+    int updateState(int id, int state);
 
     int delete(int id);
 }

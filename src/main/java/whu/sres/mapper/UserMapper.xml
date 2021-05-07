@@ -50,6 +50,18 @@
         where id = #{id}
     </update>
 
+    <update id="updatePwd">
+        update user
+        set password = #{password}
+        where id = #{id}
+    </update>
+
+    <update id="updatePhone">
+        update user
+        set phone = #{phone}
+        where id = #{id}
+    </update>
+
     <select id="getPwdByUserId" resultType="java.lang.String">
         select password
         from user

@@ -38,6 +38,18 @@
         where date = #{timestamp}
     </select>
 
+    <select id="getRecordBeforeStartTimestamp" resultMap="withUser">
+        select *
+        from book_record
+        where start &gt; #{timestamp}
+    </select>
+
+    <select id="getRecordByState" resultMap="withUser">
+        select *
+        from book_record
+        where state = #{state}
+    </select>
+
     <insert id="add">
         insert into book_record(date, room, user, phone, user_id, state, start, end)
         values (#{timestamp}, #{room}, #{realUser}, #{phone}, #{userId}, #{state}, #{start}, #{end})
@@ -62,6 +74,12 @@
         where id = #{id}
     </update>
 
+    <update id="updateState">
+        update book_record
+        set state = #{state}
+        where id = #{id}
+    </update>
+
     <select id="getRecordByRoomAndTimestamp" resultMap="withUser">
         select *
         from book_record
@@ -69,7 +87,7 @@
           and date = #{timestamp}
     </select>
 
-    <select id="getRecordByUserId" resultMap="base">
+    <select id="getRecordByUserId" resultMap="withUser">
         select *
         from book_record
         where user_id = #{userId}

@@ -2,42 +2,6 @@ const room = [220, 301, 313, 320, 504, 429, 430, 431];
 const week = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 let chooseDate = 0;
 
-const dateStringToTimestamp = function (DateString) {
-    const dateStr = DateString.replace(/-/g, '/');
-    return Date.parse(dateStr) / 1000;
-}
-
-const timestampToDate = function (timestamp) {
-    return new Date(timestamp * 1000);
-}
-
-const timestampToDateString = function (timestamp) {
-    const date = timestampToDate(timestamp);
-    return date.getFullYear() + "-" + showIntString(date.getMonth() + 1) + "-" + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
-}
-
-const formatDateYYYYMMSS = function (date) {
-    return date.getFullYear() + "-" + showIntString(date.getMonth() + 1) + "-" + showIntString(date.getDate());
-}
-
-const getWeekDay = function (timestamp) {
-    const date = timestampToDate(timestamp);
-    return week[date.getDay()];
-}
-const time2num = function (timeStr) {
-    timeStr = timeStr.replace("：", ":");
-    const hm = timeStr.split(":");
-    return parseInt(hm[0].trim()) * 60 + parseInt(hm[1].trim());
-}
-
-const num2timeStr = function (numInt) {
-    if (numInt % 60 === 0) {
-        return numInt / 60 + ":00";
-    } else {
-        return (numInt - 30) / 60 + ":30";
-    }
-}
-
 const showRecordByTimestamp = function (timestamp) {
     initTableRoom();
     $.ajax({
@@ -110,10 +74,6 @@ const getTimeByRowId = function (rowId) {
         start += 30 * 60;
     }
     return start;
-}
-
-const showIntString = function (val) {
-    return val.toString().padStart(2, "0");
 }
 
 const displayRecords = function (records) {
@@ -192,11 +152,13 @@ $('#loginBtn').click(async () => {
                 return;
             }
             console.log(res);
-            const {access_token, access_token_expiry, user_id, user_name} = res.data;
+            const {access_token, access_token_expiry, user_id, user_name, user_roles, user_phone} = res.data;
             login({access_token, access_token_expiry});
             localStorage.setItem("login_user", user_name);
             localStorage.setItem("login_user_id", user_id);
-            startCountdown();
+            localStorage.setItem("login_user_roles", JSON.stringify(user_roles));
+            localStorage.setItem("login_user_phone", user_phone);
+            startCountdown(toLogin, toLogout);
             $("#userLabel").text(user_name).removeClass(
                 'hidden');
             $("#btnLogin").addClass('hidden');
@@ -371,6 +333,10 @@ $('.spinner .btn:last-of-type').on('click', function () {
     }
 });
 
+$("#userLabel").click(() => {
+    window.location.href = `${base}/manage`;
+});
+
 function changeBookingDateOrRoom() {
     const time = dateStringToTimestamp($("#bookingDate").val());
     if (!time) return;
@@ -404,6 +370,9 @@ function changeBookingDateOrRoom() {
 
 async function syncLogout(event) {
     if (event.key === 'logout') {
+        if (!inMemoryToken) {
+            return;
+        }
         console.log('logged out from storage!')
         $('#userLabel').empty().addClass('hidden');
         $('#btnLogin').removeClass('hidden');
@@ -430,6 +399,16 @@ async function syncLogout(event) {
     }
 }
 
+function toLogin() {
+    $("#loginModal").modal('show');
+}
+
+function toLogout() {
+    $('#userLabel').empty().addClass('hidden');
+    $('#btnLogin').removeClass('hidden');
+    $('#btnLogout').addClass('hidden');
+}
+
 $(function () {
     chooseDate = dateStringToTimestamp(formatDateYYYYMMSS(new Date())); // 默认选择今天
     $("#bookingDate").val(formatDateYYYYMMSS(timestampToDate(chooseDate)));
@@ -450,23 +429,15 @@ $(function () {
     });
     $('#bookingDate, #bookingRoom').change(changeBookingDateOrRoom);
     onLogout(syncLogout);
-    auth(() => {
-        $("#loginModal").modal('show');
-    }, () => {
-        $('#userLabel').empty().addClass('hidden');
-        $('#btnLogin').removeClass('hidden');
-        $('#btnLogout').addClass('hidden');
-    }).then(() => {
+    auth(toLogin, toLogout).then(() => {
         // 刷新是否成功
-        if (inMemoryToken) {
-            if (localStorage.getItem("login_user")) {
-                $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
-                    'hidden');
-                $("#btnLogin").addClass('hidden');
-                $('#btnLogout').removeClass(
-                    'hidden');
-            }
-            startCountdown();
+        if (isLogin()) {
+            $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
+                'hidden');
+            $("#btnLogin").addClass('hidden');
+            $('#btnLogout').removeClass(
+                'hidden');
+            startCountdown(toLogin, toLogout);
         }
     }, () => {
     })

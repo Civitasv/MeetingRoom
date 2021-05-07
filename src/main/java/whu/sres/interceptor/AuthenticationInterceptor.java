@@ -20,13 +20,7 @@ import java.util.List;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-    private UserService userService;
     private TokenService tokenService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Autowired
     public void setTokenService(TokenService tokenService) {
@@ -63,6 +57,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if (permissions.contains(url)) {
                         return true;
                     }
+                    throw new CustomException();
+                } catch (CustomException e) {
                     throw new CustomException(ResultCode.METHOD_NOT_ALLOWED, "用户不具有该权限");
                 } catch (Exception e) {
                     throw new CustomException(ResultCode.AUTH_NEED, "登录已过期，请重新登录");

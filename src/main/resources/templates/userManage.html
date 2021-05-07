@@ -8,11 +8,8 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>资环院会议室预订系统</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/tether.min.css}">
-
     <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
     <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
-
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 
@@ -27,7 +24,7 @@
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="index.html">系统首页</a>
+    <a class="navbar-brand" th:href="@{~/}">系统首页</a>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-2">
             <li class="nav-item dropdown"><a
@@ -56,14 +53,13 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAdmin">
                     <a class="dropdown-item" href="#">用户添加</a> <a
                         class="dropdown-item" href="#">用户删除</a> <a class="dropdown-item"
-                                                                   href="#">用户信息修改</a> <a class="dropdown-item"
-                                                                                          href="#">撤销会议室</a>
+                                                                   href="#">用户信息修改</a>
                     <a class="dropdown-item hidden" id="examineHMR" href="#">审核会议室</a>
 
                 </div>
             </li>
 
-            <li class="nav-item"><a class="nav-link" href="#" id="logout"
+            <li class="nav-item"><a class="nav-link" th:href="@{~/}" id="logout"
                                     style="float: right">退出</a></li>
 
         </ul>
@@ -78,7 +74,7 @@
                 <th>序号</th>
                 <th>日期</th>
                 <th>用户</th>
-                <th>房间</th>
+                <th>会议室</th>
                 <th>开始时间</th>
                 <th>结束时间</th>
                 <th>实际借用人</th>
@@ -97,7 +93,7 @@
                 <th>序号</th>
                 <th>日期</th>
                 <th>用户</th>
-                <th>房间</th>
+                <th>会议室</th>
                 <th>开始时间</th>
                 <th>结束时间</th>
                 <th>实际借用人</th>
@@ -111,7 +107,7 @@
     </div>
     <!-- show booking history or revoke booked room -->
 
-    <div id="editPersonInfo" class="hidden divcenter">
+    <div id="editPersonInfo" class="hidden">
 
         <form class="form-horizontal">
             <div class="form-group row">
@@ -142,8 +138,7 @@
                 <label class="col-md-1"></label>
                 <div class="col-md-2">
                     <div class="checkbox">
-                        <label> <input type="checkbox" id="chkChgPwd">是否修改密码
-                        </label>
+                        <label> <input type="checkbox" id="chkChgPwd">是否修改密码</label>
                     </div>
                 </div>
             </div>
@@ -161,13 +156,7 @@
                     <input class="form-control" type="password" id="newPwd2">
                 </div>
             </div>
-            <div class="form-group row">
 
-                <label class="col-md-1 control-label" for="oldPwd">旧密码：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="password" id="oldPwd">
-                </div>
-            </div>
 
             <div class="row hidden" id="infoLabelCon">
                 <label class="col-md-1"></label>
@@ -183,10 +172,6 @@
             <div class="col-md-1">
                 <button class="btn" id="btnModify">提交</button>
             </div>
-
-            <div class="col-md-1">
-                <button class="btn" id="btnCancel">取消</button>
-            </div>
         </div>
 
     </div>
@@ -194,8 +179,10 @@
 
 <script type="text/javascript" th:src="@{/scripts/jquery-3.2.1.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/popper.js}"></script>
-<script type="text/javascript" th:src="@{/scripts/tether.min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/bootstrap.js}"></script>
-<!--<script type="text/javascript" th:src="@{/scripts/userManage.js}"></script>-->
+<script type="text/javascript" th:src="@{/scripts/base.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/dateUtil.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/auth.js}"></script>
+<script type="text/javascript" th:src="@{/scripts/userManage.js}"></script>
 </body>
 </html>

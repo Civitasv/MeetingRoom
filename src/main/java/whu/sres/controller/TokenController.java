@@ -5,15 +5,14 @@ import org.springframework.web.bind.annotation.*;
 import whu.sres.authority.VerifyToken;
 import whu.sres.handler.Result;
 import whu.sres.handler.ResultCode;
+import whu.sres.model.Role;
 import whu.sres.model.User;
 import whu.sres.service.TokenService;
 import whu.sres.service.UserService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("token")
@@ -55,7 +54,12 @@ public class TokenController {
         map.put("access_token_expiry", accessTokenInfo.get("accessTokenExpiry"));
         map.put("user_id", user.getId());
         map.put("user_name", user.getName());
-
+        map.put("user_phone", user.getPhone());
+        List<String> roles = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            roles.add(role.getRole());
+        }
+        map.put("user_roles", roles);
         Map<String, Object> refreshTokenInfo = tokenService.getRefreshToken(userId);
         // 将 refresh token 加入httponly cookie
         Cookie cookie = new Cookie("refresh_token", refreshTokenInfo.get("refreshToken").toString());

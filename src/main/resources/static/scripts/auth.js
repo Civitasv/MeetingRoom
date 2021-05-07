@@ -17,6 +17,10 @@ async function logout() {
         localStorage.removeItem("login_user");
     if (localStorage.getItem("login_user_id"))
         localStorage.removeItem("login_user_id");
+    if (localStorage.getItem("login_user_roles"))
+        localStorage.removeItem("login_user_roles");
+    if (localStorage.getItem("login_user_phone"))
+        localStorage.removeItem("login_user_phone");
     inMemoryToken = null; // 将token置空
     if (interval)
         endCountdown(); // 停止倒计时
@@ -38,7 +42,7 @@ async function logout() {
     }
 }
 
-async function auth(loginCallback, logoutCallback) {
+async function auth(toLogin, toLogout) {
     if (!inMemoryToken) {
         const url = `${base}/token/refresh`;
         try {
@@ -56,13 +60,15 @@ async function auth(loginCallback, logoutCallback) {
                     if (isLogin()) {
                         console.log("需要重新登录");
                         await logout();
-                        logoutCallback();
+                        toLogout();
                     }
                 } else {
-                    const {access_token, access_token_expiry, user_id, user_name} = res.data;
+                    const {access_token, access_token_expiry, user_id, user_name, user_roles, user_phone} = res.data;
                     login({access_token, access_token_expiry});
                     localStorage.setItem("login_user", user_name);
                     localStorage.setItem("login_user_id", user_id);
+                    localStorage.setItem("login_user_roles", JSON.stringify(user_roles));
+                    localStorage.setItem("login_user_phone", user_phone);
                 }
             } else {
                 console.log(response.statusText)
@@ -71,15 +77,15 @@ async function auth(loginCallback, logoutCallback) {
             console.log(e);
             if (isLogin()) {
                 await logout();
-                logoutCallback();
-                loginCallback();
+                toLogout();
+                toLogin();
             }
         }
     }
     const access_token = inMemoryToken;
     // We already checked for server. This should only happen on client.
     if (!access_token) {
-        loginCallback();
+        toLogin();
     }
     return access_token
 }
@@ -88,15 +94,15 @@ const addMinutes = function (dt, minutes) {
     return new Date(dt.getTime() + minutes * 60000);
 }
 
-const startCountdown = function () {
+const startCountdown = function (toLogin, toLogout) {
     interval = setInterval(async () => {
         if (inMemoryToken) {
             if (addMinutes(new Date(), 1) >= new Date(inMemoryToken.expiry)) {
                 inMemoryToken = null;
-                inMemoryToken = await auth();
+                inMemoryToken = await auth(toLogin, toLogout);
             }
         } else {
-            inMemoryToken = await auth();
+            inMemoryToken = await auth(toLogin, toLogout);
         }
     }, 60000);
 }

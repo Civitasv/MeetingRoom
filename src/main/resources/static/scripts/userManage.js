@@ -1,389 +1,394 @@
+$(function () {
+    auth(() => {
+        location.href = `${base}`;
+    }, () => {
+    }).then(() => {
+        // 刷新是否成功
+        if (isLogin()) {
+            startCountdown(() => {
+                location.href = `${base}`;
+            }, () => {
+            });
+            showUserInfo();
+        }
+    }, () => {
+    })
+    $("#revokeMR").click(async () => {
+        $('#editPersonInfo').addClass('hidden');
+        await getCanRevokeData();
+    });
 
-$(document).ready(function() {
-	$.ajax({
-		url : './servlets/UserManage',
-		type : 'GET',
-		dataType : 'json',
-		data:{
-			service:0
-		}
-	}).done(function(data) {
-		console.log(data.uid.trim()+", " + data.role.trim())
-		if(data.uid.trim() == "" || data.role.trim() == ""){
-			console.log("please login");
-			/*window.location.href="index.html"*/
-		}else{
-			if(data.role.trim() == 'MANAGER'){
-				$('nav li:nth-last-child(2)').removeClass('hidden');
-			}
-			else if(data.role.trim() == 'H_MANAGER')
-			{
-				console.log("H_MANAGER");
-				$('nav li:nth-last-child(2)').removeClass('hidden');
-				$('#examineHMR').removeClass('hidden');
-			}
-			else
-				{
-				console.log("USER");
-				}
-		}
-	}).fail(function() {
-		console.log("accessing usermanager error");
-		/*window.location.href="index.html"*/
-	});
+    $("#historyMR").click(async () => {
+        $('#editPersonInfo').addClass('hidden');
+        await getHistoryData();
+    })
+
+    $("#examineHMR").click(async () => {
+        $('#editPersonInfo').addClass('hidden');
+        await getExamineData();
+    });
+
+    $("#editUserInfo").click(async () => {
+        $('#result table:first').addClass('hidden');
+        $('#result table:last').addClass('hidden');
+        $('#editPersonInfo').removeClass('hidden');
+        const userId = localStorage.getItem("login_user_id");
+        const userName = localStorage.getItem("login_user");
+        const phone = localStorage.getItem("login_user_phone");
+        const roles = JSON.parse(localStorage.getItem("login_user_roles"));
+        if (roles.find(value => {
+            return value === '管理员'
+        })) {
+            $('#role').val("管理员");
+        } else {
+            $('#role').val("普通用户");
+        }
+        $('#userID').val(userId);
+        $('#userName').val(userName);
+        $('#phone').val(phone);
+    });
+
+    $('#editPersonInfo form input[type="checkbox"]').change(function () {
+        if ($(this).is(":checked")) {
+            //show the controls of setting password.
+            $('#newPwd1Con').removeClass('hidden');
+            $('#newPwd2Con').removeClass('hidden');
+        } else {
+            //hide the password setting controls.
+            $('#newPwd1Con').addClass('hidden');
+            $('#newPwd2Con').addClass('hidden');
+        }
+    });
 });
 
-
-function showRevokeTable(data){
-	$('#ERTable tbody').html('');
-	var len = data.length;
-		for(var i=0;i<len;i++){
-			var $tr = $('<tr></tr>');
-		$tr.append("<th scope='row'>" + i + "</th>");
-		$tr.append("<td>"+ data[i].date +"</td>");
-		$tr.append("<td>"+ data[i].user +"</td>");
-		$tr.append("<td>"+ data[i].room +"</td>");
-		$tr.append("<td>"+ data[i].startTime +"</td>");
-		$tr.append("<td>"+ data[i].endTime +"</td>");
-		$tr.append("<td>"+ data[i].actualUser +"</td>");
-		$tr.append("<td>"+ data[i].phone +"</td>");
-		var $a = $('<a href="#" ></a>').attr("id",data[i].rowId).text('撤销');
-		
-		(function(rowid){
-			$a.click(function(event){
-			$.ajax({
-				url : './servlets/UserManage',
-				type : 'GET',
-				dataType : 'json',
-				data:{
-					service:3,
-					rowID:rowid
-				}
-			}).done(function(result) {
-				if(result.revokeState == 1){
-					//success.
-					$('#'+result.rowID).parents('tr').empty().remove();
-					alert("已撤销该会议室预订！");
-					$.ajax({
-						url : './servlets/UserManage',
-						type : 'GET',
-						dataType : 'json',
-						data:{
-							service:1
-						}
-					}).done(function(data) {
-						showRevokeTable(data.records);
-					}).fail(function() {
-						console.log("error occurs while revoking booked rooms");
-					});
-				}
-			}).fail(function() {
-				alert("撤销失败，请稍后再试！");
-				console.log("error");
-			});
-		});
-		
-		})($a.attr("id"));
-		
-		
-		var $td = $('<td></td>').append($a);
-		$tr.append($td);
-		$('#result table:first tbody').append($tr);
-		}
-		$('#result table:last').addClass('hidden');
-		$('#result table:first').removeClass('hidden');
+function showUserInfo() {
+    // 获取角色
+    const roles = JSON.parse(localStorage.getItem("login_user_roles"));
+    if (roles.find(value => {
+        return value === '管理员'
+    })) {
+        $('nav li:nth-last-child(2)').removeClass('hidden');
+        $('#examineHMR').removeClass('hidden');
+    } else {
+        console.log("普通用户");
+    }
 }
 
-
-function showExamineTable(data){
-	$('#ERTable tbody').html('');
-	var len = data.length;
-		for(var i=0;i<len;i++){
-			var $tr = $('<tr></tr>');
-		$tr.append("<th scope='row'>" + i + "</th>");
-		$tr.append("<td>"+ data[i].date +"</td>");
-		$tr.append("<td>"+ data[i].user +"</td>");
-		$tr.append("<td>"+ data[i].room +"</td>");
-		$tr.append("<td>"+ data[i].startTime +"</td>");
-		$tr.append("<td>"+ data[i].endTime +"</td>");
-		$tr.append("<td>"+ data[i].actualUser +"</td>");
-		$tr.append("<td>"+ data[i].phone +"</td>");
-		
-		var $a = $('<a href="#" ></a>').attr("id",data[i].rowId).text('批准');
-		var $b = $('<a href="#" ></a>').attr("id",data[i].rowId).text('拒绝');
-		
-		if(data[i].state == "Y")
-			{
-				$a.text('已批准');
-				$a.removeAttr('href');
-				$a.removeAttr('onclick');
-				$b.addClass('hidden');
-			}
-		
-		(function(rowid){
-			$a.click(function(event){
-			$.ajax({
-				url : './servlets/UserManage',
-				type : 'GET',
-				dataType : 'json',
-				data:{
-					service:5,
-					rowID:rowid,
-					act:1
-				}
-			}).done(function(result) {
-				if(result.passState == 1){
-					//success.
-					console.log("pass");
-					$a.text('已批准');
-					$a.removeAttr('href');
-					$a.removeAttr('onclick');
-					$b.addClass('hidden');
-					alert("已批准该会议室预订！");
-					$.ajax({
-						url : './servlets/UserManage',
-						type : 'GET',
-						dataType : 'json',
-						data:{
-							service:4
-						}
-					}).done(function(data) {
-						showExamineTable(data.records);
-					}).fail(function() {
-						console.log("error occurs while examining booked rooms");
-					});
-					//$('#'+result.rowID).parents('tr').empty().remove();
-				}
-			}).fail(function() {
-				alert("批准失败，请稍后再试！");
-				console.log("pass error");
-			});
-		});
-		
-		})($a.attr("id"));
-		
-		(function(rowid){
-			$b.click(function(event){
-			$.ajax({
-				url : './servlets/UserManage',
-				type : 'GET',
-				dataType : 'json',
-				data:{
-					service:5,
-					rowID:rowid,
-					act:0
-				}
-			}).done(function(result) {
-				if(result.rejectState == 1){
-					//success.
-					console.log("reject");
-					$('#'+result.rowID).parents('tr').empty().remove();
-					alert("已拒绝该会议室预订！");
-					$.ajax({
-						url : './servlets/UserManage',
-						type : 'GET',
-						dataType : 'json',
-						data:{
-							service:4
-						}
-					}).done(function(data) {
-						showExamineTable(data.records);
-					}).fail(function() {
-						console.log("error occurs while examining booked rooms");
-					});
-				}
-			}).fail(function() {
-				alert("拒绝失败，请稍后再试！");
-				console.log("reject error");
-			});
-		});
-		
-		})($b.attr("id"));
-		
-		
-		var $td = $('<td></td>').append($('<p></p>').append($a))
-		$tr.append($td.append($('<p></p>').append($b)));
-		
-		$('#result table:first tbody').append($tr);
-		}
-		$('#result table:last').addClass('hidden');
-		$('#result table:first').removeClass('hidden');
+async function getCanRevokeData() {
+    const url = `${base}/record/canRevoke`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                alert(res.message);
+                return;
+            }
+            showRevokeTable(res.data);
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
 }
 
+async function getHistoryData() {
+    const userId = localStorage.getItem("login_user_id");
+    const url = `${base}/record/history?id=${userId}`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                alert(res.message);
+                return;
+            }
+            showHistoryData(res.data);
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
 
-//revoke the booked room.
-$('#revokeMR').click(function(event){
-	$('#editPersonInfo').addClass('hidden');
-	$.ajax({
-		url : './servlets/UserManage',
-		type : 'GET',
-		dataType : 'json',
-		data:{
-			service:1
-		}
-	}).done(function(data) {
-		debugger;
-		showRevokeTable(data.records);
-	}).fail(function() {
-		console.log("error occurs while revoking booked rooms");
-	});
-});
+async function getExamineData() {
+    const url = `${base}/record/examine`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                alert(res.message);
+                return;
+            }
+            showExamineData(res.data);
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
 
-//Browse the history of booking.
-$('#historyMR').click(function(event){
-	$('#editPersonInfo').addClass('hidden');
-	$.ajax({
-		url : './servlets/UserManage',
-		type : 'GET',
-		dataType : 'json',
-		data:{
-			service:2
-		}
-	}).done(function(data) {
-		debugger;
-		$('#result table:last tbody td').empty().remove();
-		$('#result table:last tbody tr').empty().remove();
-		var len = data.records.length;
-		for(var i=0;i<len;i++){
-			var $tr = $('<tr></tr>');
-		$tr.append("<th scope='row'>" + i + "</th>");
-		$tr.append("<td>"+ data.records[i].date +"</td>");
-		$tr.append("<td>"+ data.records[i].user +"</td>");
-		$tr.append("<td>"+ data.records[i].room +"</td>");
-		$tr.append("<td>"+ data.records[i].startTime +"</td>");
-		$tr.append("<td>"+ data.records[i].endTime +"</td>");
-		$tr.append("<td>"+ data.records[i].actualUser +"</td>");
-		$tr.append("<td>"+ data.records[i].phone +"</td>");
-		
-		$('#result table:last tbody').append($tr);
-		}
-		$('#result table:first').addClass('hidden');
-		$('#result table:last').removeClass('hidden');
-	}).fail(function() {
-		console.log("error");
-	});
-});
+async function revokeRecord(id) {
+    const url = `${base}/record/delete/${id}`
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {"Authorization": inMemoryToken["token"]}
+        })
+        if (response.ok) {
+            const res = await response.json();
+            console.log(res.code !== 200 ? "无法取消预定" : "成功取消预定");
+            if (res.code === 200) {
+                $('#' + id).parents('tr').empty().remove();
+                alert("已撤销该会议室预订！");
+            }
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
 
+async function agreeRecord(id, $a, $b) {
+    const url = `${base}/record/update/${id}/1`
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {"Authorization": inMemoryToken["token"]}
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code === 200) {
+                $a.text('已批准');
+                $a.removeAttr('href');
+                $a.removeAttr('onclick');
+                $b.addClass('hidden');
+                alert("已批准该会议室预订！");
+            }
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
 
-//examine the 301 room.
-$('#examineHMR').click(function(event){
-	$('#editPersonInfo').addClass('hidden');
-	$.ajax({
-		url : './servlets/UserManage',
-		type : 'GET',
-		dataType : 'json',
-		data:{
-			service:4
-		}
-	}).done(function(data) {
-		showExamineTable(data.records);
-	}).fail(function() {
-		console.log("error occurs while examining booked rooms");
-	});
-});
+/**
+ * @param data 可以撤销的数据
+ */
+function showRevokeTable(data) {
+    $('#ERTable tbody').html('');
+    data.forEach((item, i) => {
+        const $tr = $('<tr></tr>');
+        $tr.append("<th scope='row'>" + i + "</th>");
+        $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
+        $tr.append("<td>" + item.user.name + "</td>");
+        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
+        $tr.append("<td>" + item.realUser + "</td>");
+        $tr.append("<td>" + item.phone + "</td>");
+        const $a = $('<a href="#" ></a>').attr("id", item.id).text('撤销');
+        $a.click(async () => {
+            await revokeRecord(item.id);
+        })
+        const $td = $('<td></td>').append($a);
+        $tr.append($td);
+        $('#ERTable tbody').append($tr);
+    });
+    $('#HTable').addClass('hidden');
+    $('#ERTable').removeClass('hidden');
+}
 
+/**
+ * @param data 用户预定历史记录
+ */
+function showHistoryData(data) {
+    $('#HTable tbody').html('');
+    data.forEach((item, i) => {
+        const $tr = $('<tr></tr>');
+        $tr.append("<th scope='row'>" + i + "</th>");
+        $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
+        $tr.append("<td>" + item.user.name + "</td>");
+        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
+        $tr.append("<td>" + item.realUser + "</td>");
+        $tr.append("<td>" + item.phone + "</td>");
 
+        $('#HTable tbody').append($tr);
+    });
+    $('#ERTable').addClass('hidden');
+    $('#HTable').removeClass('hidden');
+}
 
-$('#editUserInfo').click(function(){
-	$('#result table:first').addClass('hidden');
-	$('#result table:last').addClass('hidden');
-	//Get personal infomation from server.
-	$.ajax({
-				url : './servlets/userInfo',
-				type : 'GET',
-				dataType : 'json',
-				data:{
-					service:0
-				}
-			}).done(function(result) {
-				$('#userID').val(result.uid);
-				$('#userName').val(result.name);
-				$('#role').val(result.role);
-				$('#phone').val(result.phone);
-				$('#editPersonInfo').removeClass('hidden');
-			}).fail(function() {
-				console.log("error");
-			});
-	
-});
+/**
+ * @param data 管理员审核数据
+ */
+function showExamineData(data) {
+    $('#ERTable tbody').html('');
+    data.forEach((item, i) => {
+        const $tr = $('<tr></tr>');
+        $tr.append("<th scope='row'>" + i + "</th>");
+        $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
+        $tr.append("<td>" + item.user.name + "</td>");
+        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
+        $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
+        $tr.append("<td>" + item.realUser + "</td>");
+        $tr.append("<td>" + item.phone + "</td>");
+        const $a = $('<a href="#" ></a>').attr("id", item.id).text('批准');
+        const $b = $('<a href="#" ></a>').attr("id", item.id).text('拒绝');
 
-$('#editPersonInfo form input[type="checkbox"]').change(function(){
-	if($(this).is(":checked")){
-		//show the controls of setting password.
-		$('#newPwd1Con').removeClass('hidden');
-		$('#newPwd2Con').removeClass('hidden');
-	}else{
-		//hide the passowrd setting controls.
-		$('#newPwd1Con').addClass('hidden');
-		$('#newPwd2Con').addClass('hidden');
-	}
-});
+        if (item.state === 1) {
+            $a.text('已批准');
+            $a.removeAttr('href');
+            $a.removeAttr('onclick');
+            $b.addClass('hidden');
+        }
+
+        $a.click(async () => {
+            await agreeRecord(item.id, $a, $b); // 批准
+        });
+
+        $b.click(async () => {
+            await revokeRecord(item.id);
+        });
+
+        const $td = $('<td></td>').append($('<p></p>').append($a));
+        $tr.append($td.append($('<p></p>').append($b)));
+
+        $('#ERTable tbody').append($tr);
+    });
+    $('#ERTable').removeClass('hidden');
+    $('#HTable').addClass('hidden');
+}
 
 //Summit to modify the personal infomation.
-$('#btnModify').click(function(){
-	var oldPwd = $('#oldPwd').val().trim();
-	if(oldPwd === ""){
-		$('#infoLabel').text("旧密码不能为空！");
-		$('#infoLabelCon').removeClass("hidden");
-		return ;
-	}
-	
-	//the new password does not match with the repeated one.
-	if( $('#chkChgPwd').is(':checked') && $('#newPwd1').val().trim() !== $('#newPwd2').val().trim()){
-		$('#infoLabel').text("新密码两次输入的不一样！");
-		$('#infoLabelCon').removeClass("hidden");
-		return ;
-	}
-	var para = {};
-	if($('#chkChgPwd').is(':checked')){
-		//modify the password.
-		para={
-			service:2,
-			phone:$('#phone').val(),
-			oldPassword:$('#oldPwd').val(),
-			newPassword:$('#newPwd1').val()
-		}
-	}else{
-		//only update the phone number.
-		para={
-			service:1,
-			phone:$('#phone').val(),
-			oldPassword:$('#oldPwd').val()
-		}
-	}
-	$.ajax({
-				url : './servlets/userInfo',
-				type : 'GET',
-				dataType : 'json',
-				data:para
-			}).done(function(result) {
-				if(result.state == 1){
-					$('#infoLabel').text("恭喜，信息修改成功！");
-					$('#infoLabelCon').removeClass("hidden");
-				}else if(result.state == 0){
-					$('#infoLabel').text("抱歉，信息修改失败！");
-					$('#infoLabelCon').removeClass("hidden");
-				}else if(result.state == 2){
-					$('#infoLabel').text("旧密码不正确！");
-					$('#infoLabelCon').removeClass("hidden");
-				}
-			}).fail(function() {
-				console.log("error");
-			});
-	
+$('#btnModify').click(async function () {
+    //the new password does not match with the repeated one.
+    const checked = $('#chkChgPwd').is(':checked');
+    const password = $('#newPwd1').val();
+    const repeatPassword = $('#newPwd2').val();
+    if (checked && password !== repeatPassword) {
+        $('#infoLabel').text("两次输入的新密码不一样！");
+        $('#infoLabelCon').removeClass("hidden");
+        return;
+    }
+    let user;
+    if (checked) {
+        user = {
+            id: localStorage.getItem("login_user_id"),
+            password: password,
+            phone: $('#phone').val(),
+            name: localStorage.getItem("login_user")
+        }
+        await updatePwdAndPhone(user, () => {
+            $('#infoLabel').text("恭喜，信息修改成功！");
+            $('#infoLabelCon').removeClass("hidden");
+        }, () => {
+            $('#infoLabel').text("抱歉，信息修改失败！");
+            $('#infoLabelCon').removeClass("hidden");
+        });
+    } else {
+        user = {
+            id: localStorage.getItem("login_user_id"),
+            phone: $('#phone').val()
+        }
+        await updatePhone(user, () => {
+            $('#infoLabel').text("恭喜，信息修改成功！");
+            $('#infoLabelCon').removeClass("hidden");
+        }, () => {
+            $('#infoLabel').text("抱歉，信息修改失败！");
+            $('#infoLabelCon').removeClass("hidden");
+        });
+    }
+
+
 });
 
-$('#btnCancel').click(function(){
-	
-});
-$('#logout').click(function(event){
-	  $.ajax({
-			url : './logout',
-			type : 'GET',
-			dataType : 'json'
-		}).done(function(data) {
-			/*window.location.href="../../templates/index.html"*/
-		}).fail(function() {
-			console.log("error");
-		});
-});
+/**
+ * 更新用户
+ * @param user 用户数据
+ * @param resolve 成功
+ * @param reject 失败
+ */
+async function updatePwdAndPhone(user, resolve, reject) {
+    const url = `${base}/user/update`
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code === 200) {
+                resolve();
+            } else
+                reject();
+        } else {
+            reject();
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        reject();
+        console.log(e);
+    }
+}
+
+/**
+ * 更新用户手机
+ * @param user 用户数据
+ * @param resolve 成功
+ * @param reject 失败
+ */
+async function updatePhone(user, resolve, reject) {
+    const url = `${base}/user/updatePhone`
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code === 200) {
+                resolve();
+            } else
+                reject();
+        } else {
+            reject();
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        reject();
+        console.log(e);
+    }
+}

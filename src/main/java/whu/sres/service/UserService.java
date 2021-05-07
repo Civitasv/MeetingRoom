@@ -15,6 +15,10 @@ public interface UserService {
 
     int update(User user);
 
+    int updatePwd(User user);
+
+    int updatePhone(User user);
+
     String getPwdByUserId(String id);
 
     List<User> getAll();
@@ -22,4 +26,5 @@ public interface UserService {
     List<User> getUsersByName(String name);
 
     List<User> getUsersByPhone(String phone);
+
 }

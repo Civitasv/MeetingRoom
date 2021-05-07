@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import whu.sres.authority.VerifyToken;
 import whu.sres.handler.Result;
 import whu.sres.handler.ResultCode;
+import whu.sres.model.Role;
 import whu.sres.model.User;
 import whu.sres.service.TokenService;
 import whu.sres.service.UserService;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("user")
@@ -48,7 +48,12 @@ public class UserController {
             map.put("access_token_expiry", accessTokenInfo.get("accessTokenExpiry"));
             map.put("user_id", user.getId());
             map.put("user_name", user.getName());
-
+            map.put("user_phone", user.getPhone());
+            List<String> roles = new ArrayList<>();
+            for (Role role : user.getRoles()) {
+                roles.add(role.getRole());
+            }
+            map.put("user_roles", roles);
             // 将 refresh token 加入httponly cookie
             Cookie cookie = new Cookie("refresh_token", refreshTokenInfo.get("refreshToken").toString());
             cookie.setMaxAge(Integer.parseInt(refreshTokenInfo.get("refreshTokenMaxAge").toString()));
@@ -101,33 +106,39 @@ public class UserController {
         // 密码加密
         String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
         user.setPassword(encryptPwd);
-        int res = userService.add(user);
-        if (res != 0) {
-            return new Result<String>().success(true).message("成功添加用户！").code(ResultCode.CREATED).toString();
-        } else {
-            return new Result<String>().success(false).message("添加用户失败！").code(ResultCode.CONFLICT).toString();
-        }
+        userService.add(user);
+        return new Result<String>().success(true).message("成功添加用户！").code(ResultCode.CREATED).toString();
     }
 
     @VerifyToken(url = "/user/delete")
     @DeleteMapping("/delete")
     public String delete(@RequestParam String id) {
-        int res = userService.delete(id);
-        if (res != 0) {
-            return new Result<String>().success(true).message("成功删除用户！").code(ResultCode.OK).toString();
-        } else {
-            return new Result<String>().success(false).message("删除用户失败！").code(ResultCode.NO_CONTENT).toString();
-        }
+        userService.delete(id);
+        return new Result<String>().success(true).message("成功删除用户！").code(ResultCode.OK).toString();
     }
 
     @VerifyToken(url = "/user/update")
     @PutMapping("/update")
     public String update(@RequestBody User user) {
-        int res = userService.update(user);
-        if (res != 0) {
-            return new Result<String>().success(true).message("成功更新用户！").code(ResultCode.OK).toString();
-        } else {
-            return new Result<String>().success(false).message("更新用户失败！").code(ResultCode.NO_CONTENT).toString();
-        }
+        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
+        user.setPassword(encryptPwd);
+        userService.updatePwd(user);
+        return new Result<String>().success(true).message("成功更新用户！").code(ResultCode.OK).toString();
+    }
+
+    @VerifyToken(url = "/user/updatePwd")
+    @PutMapping("/updatePwd")
+    public String updatePwd(@RequestBody User user) {
+        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
+        user.setPassword(encryptPwd);
+        userService.updatePwd(user);
+        return new Result<String>().success(true).message("成功更新用户密码！").code(ResultCode.OK).toString();
+    }
+
+    @VerifyToken(url = "/user/updatePhone")
+    @PutMapping("/updatePhone")
+    public String updatePhone(@RequestBody User user) {
+        userService.updatePhone(user);
+        return new Result<String>().success(true).message("成功更新用户手机！").code(ResultCode.OK).toString();
     }
 }
