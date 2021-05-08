@@ -13,7 +13,7 @@ const showIntString = function (val) {
 
 const timestampToDateString = function (timestamp) {
     const date = timestampToDate(timestamp);
-    return date.getFullYear() + "-" + showIntString(date.getMonth() + 1) + "-" + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+    return date.getFullYear() + "-" + showIntString(date.getMonth() + 1) + "-" + showIntString(date.getDate()) + ' ' + showIntString(date.getHours()) + ':' + showIntString(date.getMinutes());
 }
 
 const formatDateYYYYMMSS = function (date) {

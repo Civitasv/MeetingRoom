@@ -7,179 +7,426 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>资环院会议室预订系统</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
+    <!-- Favicon -->
+    <link href="/assets/img/brand/favicon.png" rel="icon" type="image/png">
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker3.standalone.min.css}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
+    <!-- 自定义css -->
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/manage.css}">
+    <link th:href="@{/css/sidebars.css}" rel="stylesheet">
 </head>
 
 <body>
-
-<nav
-        class="navbar navbar-expand-sm navbar-toggleable-md navbar-light bg-faded"
-        style="background-color: #e3f2fd">
-    <button class="navbar-toggler navbar-toggler-right" type="button"
-            data-toggle="collapse" data-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false"
-            aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" th:href="@{~/}">系统首页</a>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav mr-2">
-            <li class="nav-item dropdown"><a
-                    class="nav-link dropdown-toggle" href="#"
-                    id="navbarDropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"> 预订记录 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item nav-link" id="revokeMR" href="#">撤销会议室</a>
-                    <a class="dropdown-item nav-link" id="historyMR" href="#">历史预订记录</a>
-                </div>
-            </li>
-
-            <li class="nav-item dropdown"><a
-                    class="nav-link dropdown-toggle" href="#"
-                    id="navbarDropdownMenuProfile" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"> 个人信息管理 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuProfile">
-                    <a class="dropdown-item" href="#" id="editUserInfo">信息修改</a>
-                </div>
-            </li>
-
-            <li class="nav-item dropdown hidden"><a
-                    class="nav-link dropdown-toggle" href="#"
-                    id="navbarDropdownMenuAdmin" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"> 管理员 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuAdmin">
-                    <a class="dropdown-item" href="#">用户添加</a> <a
-                        class="dropdown-item" href="#">用户删除</a> <a class="dropdown-item"
-                                                                   href="#">用户信息修改</a>
-                    <a class="dropdown-item hidden" id="examineHMR" href="#">审核会议室</a>
-
-                </div>
-            </li>
-
-            <li class="nav-item"><a class="nav-link" th:href="@{~/}" id="logout"
-                                    style="float: right">退出</a></li>
-
-        </ul>
-    </div>
-</nav>
-<div class="container-fluid" style="margin-top: 20px;">
-    <div id="result">
-        <table id="ERTable"
-               class="table table-bordered table-striped table-sm table_content hidden">
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>日期</th>
-                <th>用户</th>
-                <th>会议室</th>
-                <th>开始时间</th>
-                <th>结束时间</th>
-                <th>实际借用人</th>
-                <th>电话</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-        <table id="HTable"
-               class="table table-bordered table-striped table-sm table_content hidden">
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>日期</th>
-                <th>用户</th>
-                <th>会议室</th>
-                <th>开始时间</th>
-                <th>结束时间</th>
-                <th>实际借用人</th>
-                <th>电话</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-    </div>
-    <!-- show booking history or revoke booked room -->
-
-    <div id="editPersonInfo" class="hidden">
-
-        <form class="form-horizontal">
-            <div class="form-group row">
-                <label class="col-md-1 control-label" for="userID">用户ID：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="text" id="userID" readonly>
-                </div>
+<main>
+    <div class="container-fluid" style="height: 100%">
+        <div class="row" style="height: 100%">
+            <div class="col-2 flex-column p-3 bg-white">
+                <a th:href="@{~/}"
+                   class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                    <span class="fs-5 fw-semibold">会议室预订系统</span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-auto list-unstyled ps-0">
+                    <li class="mb-1">
+                        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#home-collapse" aria-expanded="true">
+                            预订记录
+                        </button>
+                        <div class="collapse show" id="home-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small cursor">
+                                <li><a class="link-dark rounded" id="revokeMR">撤销会议室</a></li>
+                                <li><a class="link-dark rounded" id="historyMR">历史预订记录</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="mb-1 hidden" id="manage">
+                        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#orders-collapse" aria-expanded="false">
+                            管理
+                        </button>
+                        <div class="collapse" id="orders-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small cursor">
+                                <li><a class="link-dark rounded" id="userManage">用户管理</a></li>
+                                <li><a class="link-dark rounded" id="examineHMR">预约审核</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="border-top my-3"></li>
+                    <li class="mb-1">
+                        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#account-collapse" aria-expanded="false">
+                            用户
+                        </button>
+                        <div class="collapse" id="account-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small cursor">
+                                <li><a class="link-dark rounded" id="editUserInfo">信息修改</a></li>
+                                <li><a class="link-dark rounded" th:href="@{~/}">退出</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="form-group row">
-                <label class="col-md-1 control-label" for="userName">用户名：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="text" id="userName" readonly>
+            <div class="col-10 flex-column p-3" style="background: #f2f7ff">
+                <div class="page-title">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-6 order-md-1 order-last">
+                            <h5 id="current-page-title"></h5>
+                        </div>
+                        <div class="col-12 col-md-6 order-md-2 order-first">
+                            <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a th:href="@{~/manage}">会议室预订系统</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page" id="current-page"></li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-md-1 control-label" for="role">角色：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="text" id="role" readonly>
+                <section class="section">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="editPersonInfo" class="hidden">
+                                <form>
+                                    <div class="mb-3 row">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="userID">用户ID：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="userID" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="userName">用户名：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="userName" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="role">角色：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="role" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="phone">电话：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="phone">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row align-items-center">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="chkChgPwd">修改密码：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-check-input" type="checkbox" value="" id="chkChgPwd">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row hidden" id="newPwd1Con">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="newPwd1">新密码：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="password" id="newPwd1">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row hidden" id="newPwd2Con">
+                                        <div class="col-2">
+                                            <label class="col-form-label" for="newPwd2">重复新密码：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="password" id="newPwd2">
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-info text-white" id="btnModify">提交修改</button>
+                                </div>
+                            </div>
+
+                            <div class="dataTable_wrapper d-flex flex-column" id="dataTable">
+                                <div class="dataTable-top">
+                                    <div class="dataTable-dropdown">
+                                        <select class="dataTable-selector form-select" id="perPageNum">
+                                            <option value="5">5</option>
+                                            <option value="10" selected="">10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                            <option value="25">25</option>
+                                        </select>
+                                        <label for="perPageNum">每页数量</label>
+                                    </div>
+                                    <div class="dataTable-search">
+                                        <button class="btn btn-secondary hidden" type="button" data-bs-toggle="modal"
+                                                data-bs-target="#addUserModal" id="addUserBtn">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <input class="dataTable-input" placeholder="搜索" type="text">
+                                    </div>
+                                </div>
+                                <div class="dataTable-container table-responsive">
+                                    <table class="table table-striped dataTable-table text-center" id="ERTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">序号</th>
+                                            <th scope="col">日期</th>
+                                            <th scope="col">用户</th>
+                                            <th scope="col">会议室</th>
+                                            <th scope="col">开始时间</th>
+                                            <th scope="col">结束时间</th>
+                                            <th scope="col">实际借用人</th>
+                                            <th scope="col">电话</th>
+                                            <th scope="col">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <table id="HTable"
+                                           class="table table-striped dataTable-table text-center hidden">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">序号</th>
+                                            <th scope="col">日期</th>
+                                            <th scope="col">用户</th>
+                                            <th scope="col">会议室</th>
+                                            <th scope="col">开始时间</th>
+                                            <th scope="col">结束时间</th>
+                                            <th scope="col">实际借用人</th>
+                                            <th scope="col">电话</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped dataTable-table text-center hidden"
+                                           id="userTable">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">用户ID</th>
+                                            <th scope="col">用户名</th>
+                                            <th scope="col">手机号码</th>
+                                            <th scope="col">角色</th>
+                                            <th scope="col">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="dataTable-bottom">
+                                    <div class="dataTable-info" id="showing"></div>
+                                    <ul class="pagination pagination-primary float-end dataTable-pagination">
+                                        <li class="page-item pager"><a href="#" class="page-link" data-page="1">‹</a>
+                                        </li>
+                                        <li class="page-item active"><a href="#" class="page-link" data-page="1">1</a>
+                                        </li>
+                                        <li class="page-item"><a href="#" class="page-link" data-page="2">2</a></li>
+                                        <li class="page-item"><a href="#" class="page-link" data-page="3">3</a></li>
+                                        <li class="page-item pager"><a href="#" class="page-link" data-page="2">›</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addUserModalLabel">添加用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="addUserID">用户ID：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="addUserID">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="addUserName">用户名：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="addUserName">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="addUserPwd">密码：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="password" id="addUserPwd">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="addUserRole">角色：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <select name="setRoom" class="form-select" id="addUserRole"
+                                                    placeholder="请指定用户角色">
+                                                <option value="1">普通用户</option>
+                                                <option value="2">管理员</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="addUserPhone">电话：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="addUserPhone">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="addUser">添加</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-md-1 control-label" for="phone">电话：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="text" id="phone">
+
+                <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">编辑用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="editUserID">用户ID：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="editUserID" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="editUserName">用户名：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="editUserName">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="editUserRole">角色：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <select name="setRoom" class="form-select" id="editUserRole"
+                                                    placeholder="请指定用户角色">
+                                                <option value="1">普通用户</option>
+                                                <option value="2">管理员</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="editUserPhone">电话：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="text" id="editUserPhone">
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="updateUser">更新</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-md-1"></label>
-                <div class="col-md-2">
-                    <div class="checkbox">
-                        <label> <input type="checkbox" id="chkChgPwd">是否修改密码</label>
+
+                <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteUserModalLabel">删除用户</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24">
+                                        <use xlink:href="#exclamation-triangle-fill"/>
+                                    </svg>
+                                    <div>
+                                        确认删除用户 <span id="deleteUserId" class="text-decoration-underline"></span>？
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="deleteUser">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-start">
+                        <p>2021 © 武汉大学 资源与环境科学学院</p>
+                    </div>
+                    <div class="float-end">
+                        <p>Made <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
+                                href="https://github.com/Civitasv">Civitasv</a></p>
                     </div>
                 </div>
             </div>
-            <div class="form-group row hidden" id="newPwd1Con">
-
-                <label class="col-md-1 control-label" for="newPwd1">新密码：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="password" id="newPwd1">
-                </div>
-            </div>
-            <div class="form-group row hidden" id="newPwd2Con">
-
-                <label class="col-md-1 control-label" for="newPwd2">重复新密码：</label>
-                <div class="col-md-2">
-                    <input class="form-control" type="password" id="newPwd2">
-                </div>
-            </div>
-
-
-            <div class="row hidden" id="infoLabelCon">
-                <label class="col-md-1"></label>
-                <div class="col-md-2 has-error">
-                    <label id="infoLabel"></label>
-                </div>
-
-            </div>
-
-        </form>
-        <div class="row">
-            <label class="col-md-1"></label>
-            <div class="col-md-1">
-                <button class="btn" id="btnModify">提交</button>
-            </div>
         </div>
-
     </div>
-</div>
+</main>
 
-<script type="text/javascript" th:src="@{/scripts/jquery-3.2.1.js}"></script>
-<script type="text/javascript" th:src="@{/scripts/popper.js}"></script>
-<script type="text/javascript" th:src="@{/scripts/bootstrap.js}"></script>
+<!-- jquery -->
+<script th:src="@{/scripts/jquery-3.2.1.js}"></script>
+<!-- bootstrap -->
+<script th:src="@{/scripts/bootstrap.bundle.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.zh-CN.min.js}"></script>
+<!-- 自定义js -->
 <script type="text/javascript" th:src="@{/scripts/base.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/dateUtil.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/auth.js}"></script>

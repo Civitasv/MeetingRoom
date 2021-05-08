@@ -8,25 +8,23 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="phone" column="phone"/>
-        <result property="password" column="password"/>
     </resultMap>
     <resultMap id="all" type="User">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="phone" column="phone"/>
-        <result property="password" column="password"/>
         <collection property="roles" column="id"
                     select="whu.sres.mapper.RoleMapper.getRoleByUserId"/>
     </resultMap>
     <select id="get" resultMap="all">
-        select *
+        select id, name, phone
         from user
         where id = #{id}
           and password = #{password}
     </select>
 
     <select id="getByUserId" resultMap="all">
-        select *
+        select id, name, phone
         from user
         where id = #{id}
     </select>
@@ -44,15 +42,15 @@
 
     <update id="update">
         update user
-        set name     = #{name},
-            phone    = #{phone},
-            password = #{password}
+        set name  = #{name},
+            phone = #{phone}
         where id = #{id}
     </update>
 
-    <update id="updatePwd">
+    <update id="updatePwdAndPhone">
         update user
-        set password = #{password}
+        set password = #{password},
+            phone    = #{phone}
         where id = #{id}
     </update>
 
@@ -69,24 +67,24 @@
     </select>
 
     <select id="getAll" resultMap="all">
-        select *
+        select id, name, phone
         from user
     </select>
 
     <select id="getUsersByName" resultMap="all">
-        select *
+        select id, name, phone
         from user
         where name = #{name}
     </select>
 
     <select id="getUsersByPhone" resultMap="all">
-        select *
+        select id, name, phone
         from user
         where phone = #{phone}
     </select>
 
     <select id="getUserByRoleId" resultMap="base">
-        select id, name, phone, password
+        select id, name, phone
         from user u,
              user_role ur
         where u.id = ur.user_id

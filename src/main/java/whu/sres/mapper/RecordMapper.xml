@@ -38,10 +38,10 @@
         where date = #{timestamp}
     </select>
 
-    <select id="getRecordBeforeStartTimestamp" resultMap="withUser">
+    <select id="getRecordBeforeEndTimestamp" resultMap="withUser">
         select *
         from book_record
-        where start &gt; #{timestamp}
+        where end &gt; #{timestamp}
     </select>
 
     <select id="getRecordByState" resultMap="withUser">

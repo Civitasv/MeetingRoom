@@ -47,6 +47,9 @@ public class TokenController {
         }
         // 根据userId获取user
         User user = userService.getByUserId(userId);
+        if (user == null) {
+            return new Result<Map<String, Object>>().success(true).message("用户不存在").code(ResultCode.NOT_FOUND).toString();
+        }
         // 重新生成 access token 和 refresh token
         Map<String, Object> accessTokenInfo = tokenService.getAccessToken(user); // 获得access token
         Map<String, Object> map = new HashMap<>();

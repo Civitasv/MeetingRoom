@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import whu.sres.authority.VerifyToken;
 import whu.sres.handler.Result;
 import whu.sres.handler.ResultCode;
+import whu.sres.model.Record;
 import whu.sres.model.Role;
 import whu.sres.model.User;
 import whu.sres.service.TokenService;
@@ -106,7 +107,16 @@ public class UserController {
         // 密码加密
         String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
         user.setPassword(encryptPwd);
+        // 添加用户
         userService.add(user);
+        // 获取roleId，为用户指定角色
+        Integer roleId = user.getRoleId();
+        if (roleId == 1) { // 普通用户
+            userService.addUserRole(user.getId(), 1);
+        } else if (roleId == 2) { // 管理员
+            userService.addUserRole(user.getId(), 1);
+            userService.addUserRole(user.getId(), 2);
+        }
         return new Result<String>().success(true).message("成功添加用户！").code(ResultCode.CREATED).toString();
     }
 
@@ -120,9 +130,19 @@ public class UserController {
     @VerifyToken(url = "/user/update")
     @PutMapping("/update")
     public String update(@RequestBody User user) {
-        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
-        user.setPassword(encryptPwd);
-        userService.updatePwd(user);
+        // 更新用户
+        userService.update(user);
+        // 获取roleId，更新用户角色
+        Integer roleId = user.getRoleId();
+        // 先删除，再指定
+        userService.deleteUserRole(user.getId(), 1);
+        userService.deleteUserRole(user.getId(), 2);
+        if (roleId == 1) { // 普通用户
+            userService.addUserRole(user.getId(), 1);
+        } else if (roleId == 2) { // 管理员
+            userService.addUserRole(user.getId(), 1);
+            userService.addUserRole(user.getId(), 2);
+        }
         return new Result<String>().success(true).message("成功更新用户！").code(ResultCode.OK).toString();
     }
 
@@ -131,8 +151,8 @@ public class UserController {
     public String updatePwd(@RequestBody User user) {
         String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
         user.setPassword(encryptPwd);
-        userService.updatePwd(user);
-        return new Result<String>().success(true).message("成功更新用户密码！").code(ResultCode.OK).toString();
+        userService.updatePwdAndPhone(user);
+        return new Result<String>().success(true).message("成功更新用户密码和手机号码！").code(ResultCode.OK).toString();
     }
 
     @VerifyToken(url = "/user/updatePhone")
@@ -140,5 +160,12 @@ public class UserController {
     public String updatePhone(@RequestBody User user) {
         userService.updatePhone(user);
         return new Result<String>().success(true).message("成功更新用户手机！").code(ResultCode.OK).toString();
+    }
+
+    @VerifyToken(url = "/user/all")
+    @GetMapping("/all")
+    public String getAll() {
+        List<User> users = userService.getAll();
+        return new Result<List<User>>().data(users).success(true).message("用户数据获取成功").code(ResultCode.OK).toString();
     }
 }

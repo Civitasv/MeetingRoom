@@ -1,8 +1,9 @@
+let addUserModal, editUserModal, deleteUserModal;
 $(function () {
     auth(() => {
         location.href = `${base}`;
     }, () => {
-    }).then(() => {
+    }).then(async () => {
         // 刷新是否成功
         if (isLogin()) {
             startCountdown(() => {
@@ -10,28 +11,57 @@ $(function () {
             }, () => {
             });
             showUserInfo();
+            // 默认展示预约历史数据
+            setCurrentPageTitle("撤销会议室");
+            await getCanRevokeData();
         }
     }, () => {
     })
+    addUserModal = new bootstrap.Modal(document.getElementById("addUserModal"), {});
+    editUserModal = new bootstrap.Modal(document.getElementById("editUserModal"), {});
+    deleteUserModal = new bootstrap.Modal(document.getElementById("deleteUserModal"), {});
+
     $("#revokeMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
+        $('#dataTable').removeClass('hidden');
+        $("#addUserBtn").addClass("hidden");
+        // 展示可以撤销的数据
+        setCurrentPageTitle("撤销会议室");
         await getCanRevokeData();
     });
 
     $("#historyMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
+        $('#dataTable').removeClass('hidden');
+        $("#addUserBtn").addClass("hidden");
+        // 展示预约历史数据
+        setCurrentPageTitle("历史预订记录");
         await getHistoryData();
     })
 
     $("#examineHMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
+        $('#dataTable').removeClass('hidden');
+        $("#addUserBtn").addClass("hidden");
+        // 展示管理员审核数据
+        setCurrentPageTitle("预定审核");
         await getExamineData();
     });
 
+    $("#userManage").click(async () => {
+        $('#editPersonInfo').addClass('hidden');
+        $('#dataTable').removeClass('hidden');
+        $("#addUserBtn").removeClass("hidden");
+        // 展示所有用户
+        setCurrentPageTitle("用户管理");
+        await getUserData();
+    });
+
     $("#editUserInfo").click(async () => {
-        $('#result table:first').addClass('hidden');
-        $('#result table:last').addClass('hidden');
+        $('#dataTable').addClass('hidden');
         $('#editPersonInfo').removeClass('hidden');
+        $("#addUserBtn").addClass("hidden");
+        setCurrentPageTitle("信息修改");
         const userId = localStorage.getItem("login_user_id");
         const userName = localStorage.getItem("login_user");
         const phone = localStorage.getItem("login_user_phone");
@@ -59,7 +89,216 @@ $(function () {
             $('#newPwd2Con').addClass('hidden');
         }
     });
+    //Summit to modify the personal infomation.
+    $('#btnModify').click(async function () {
+        //the new password does not match with the repeated one.
+        const checked = $('#chkChgPwd').is(':checked');
+        const password = $('#newPwd1').val();
+        const repeatPassword = $('#newPwd2').val();
+        const phone = $('#phone').val();
+        if (phone === "") {
+            alert("手机号码不可以为空！");
+            return;
+        }
+        let user;
+        if (checked) {
+            if (password === "") {
+                alert("新密码不可以为空！");
+                return;
+            }
+            if (password !== repeatPassword) {
+                alert("两次输入的密码必须相同！");
+                return;
+            }
+            user = {
+                id: localStorage.getItem("login_user_id"),
+                password: password,
+                phone: phone,
+                name: localStorage.getItem("login_user")
+            }
+            await updatePwdAndPhone(user, () => {
+                alert("恭喜，信息修改成功！");
+            }, () => {
+                alert("抱歉，信息修改失败！");
+            });
+        } else {
+            user = {
+                id: localStorage.getItem("login_user_id"),
+                phone: phone
+            }
+            await updatePhone(user, () => {
+                alert("恭喜，信息修改成功！");
+            }, () => {
+                alert("抱歉，信息修改失败！");
+            });
+        }
+    });
+    $("#addUser").click(async () => {
+        // 添加用户
+        const id = $("#addUserID").val();
+        const password = $("#addUserPwd").val();
+        const phone = $("#addUserPhone").val();
+        const name = $("#addUserName").val();
+        const roleId = $("#addUserRole option:selected").attr("value");
+        if (id === "") {
+            alert("用户ID不可以为空！");
+            return;
+        }
+        if (password === "") {
+            alert("密码不可以为空！");
+            return;
+        }
+        if (phone === "") {
+            alert("手机号码不可以为空！");
+            return;
+        }
+        if (name === "") {
+            alert("用户名不可以为空！");
+            return;
+        }
+        await addUser({
+            id: id,
+            password: password,
+            phone: phone,
+            name: name,
+            roleId: roleId
+        })
+    });
+
+    $("#updateUser").click(async () => {
+        // 更新用户
+        const id = $("#editUserID").val();
+        const phone = $("#editUserPhone").val();
+        const name = $("#editUserName").val();
+        const roleId = $("#editUserRole option:selected").attr("value");
+        if (id === "") {
+            alert("用户ID不可以为空！");
+            return;
+        }
+        if (phone === "") {
+            alert("手机号码不可以为空！");
+            return;
+        }
+        if (name === "") {
+            alert("用户名不可以为空！");
+            return;
+        }
+        await updateUser({
+            id: id,
+            phone: phone,
+            name: name,
+            roleId: roleId
+        })
+    });
+    $("#deleteUser").click(async () => {
+        const userId = $("#deleteUserId").text();
+        await deleteUser(userId);
+    });
 });
+
+async function addUser(user) {
+    const url = `${base}/user/add`
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 201) {
+                console.log(res.message);
+                alert("添加用户失败！");
+                return;
+            }
+            alert("成功添加用户！");
+            // 模态框消失
+            addUserModal.hide();
+            // 重新展示用户数据
+            await getUserData();
+        } else {
+            console.log(response.statusText);
+            alert("添加用户失败！");
+        }
+    } catch (e) {
+        console.log(e);
+        alert("添加用户失败！");
+    }
+}
+
+async function updateUser(user) {
+    const url = `${base}/user/update`
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                console.log(res.message);
+                alert("更新用户失败！");
+                return;
+            }
+            alert("成功更新用户！");
+            // 模态框消失
+            editUserModal.hide();
+            // 重新展示用户数据
+            await getUserData();
+        } else {
+            console.log(response.statusText);
+            alert("更新用户失败！");
+        }
+    } catch (e) {
+        console.log(e);
+        alert("更新用户失败！");
+    }
+}
+
+async function deleteUser(userId) {
+    const url = `${base}/user/delete?id=${userId}`
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            }
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                console.log(res.message);
+                alert("删除用户失败！");
+                return;
+            }
+            alert("成功删除用户！");
+            // 模态框消失
+            deleteUserModal.hide();
+            // 重新展示用户数据
+            await getUserData();
+        } else {
+            console.log(response.statusText);
+            alert("删除用户失败！");
+        }
+    } catch (e) {
+        console.log(e);
+        alert("删除用户失败！");
+    }
+}
 
 function showUserInfo() {
     // 获取角色
@@ -67,10 +306,10 @@ function showUserInfo() {
     if (roles.find(value => {
         return value === '管理员'
     })) {
-        $('nav li:nth-last-child(2)').removeClass('hidden');
-        $('#examineHMR').removeClass('hidden');
+        $('#manage').removeClass('hidden');
     } else {
         console.log("普通用户");
+        $('#manage').remove();
     }
 }
 
@@ -84,7 +323,7 @@ async function getCanRevokeData() {
         if (response.ok) {
             const res = await response.json();
             if (res.code !== 200) {
-                alert(res.message);
+                console.log(res.message);
                 return;
             }
             showRevokeTable(res.data);
@@ -107,7 +346,7 @@ async function getHistoryData() {
         if (response.ok) {
             const res = await response.json();
             if (res.code !== 200) {
-                alert(res.message);
+                console.log(res.message);
                 return;
             }
             showHistoryData(res.data);
@@ -129,10 +368,34 @@ async function getExamineData() {
         if (response.ok) {
             const res = await response.json();
             if (res.code !== 200) {
-                alert(res.message);
+                console.log(res.message);
                 return;
             }
             showExamineData(res.data);
+        } else {
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+async function getUserData() {
+    const url = `${base}/user/all`
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {"Authorization": inMemoryToken["token"]}
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                console.log(res.message);
+                return;
+            }
+            showUserData(res.data);
         } else {
             console.log(response.statusText)
         }
@@ -214,6 +477,7 @@ function showRevokeTable(data) {
     });
     $('#HTable').addClass('hidden');
     $('#ERTable').removeClass('hidden');
+    $('#userTable').addClass('hidden');
 }
 
 /**
@@ -236,6 +500,7 @@ function showHistoryData(data) {
     });
     $('#ERTable').addClass('hidden');
     $('#HTable').removeClass('hidden');
+    $('#userTable').addClass('hidden');
 }
 
 /**
@@ -253,9 +518,11 @@ function showExamineData(data) {
         $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
         $tr.append("<td>" + item.realUser + "</td>");
         $tr.append("<td>" + item.phone + "</td>");
-        const $a = $('<a href="#" ></a>').attr("id", item.id).text('批准');
-        const $b = $('<a href="#" ></a>').attr("id", item.id).text('拒绝');
 
+        const $btnGroup = $('<div class="btn-group" role="group"></div>');
+        const $a = $('<button type="button" class="btn btn-success" ></button>').attr("id", item.id).text('批准');
+        const $b = $('<button type="button" class="btn btn-danger" ></button>').attr("id", item.id).text('拒绝');
+        $btnGroup.append($a).append($b);
         if (item.state === 1) {
             $a.text('已批准');
             $a.removeAttr('href');
@@ -271,57 +538,79 @@ function showExamineData(data) {
             await revokeRecord(item.id);
         });
 
-        const $td = $('<td></td>').append($('<p></p>').append($a));
-        $tr.append($td.append($('<p></p>').append($b)));
+        const $td = $('<td></td>').append($btnGroup);
+        $tr.append($td);
 
         $('#ERTable tbody').append($tr);
     });
     $('#ERTable').removeClass('hidden');
     $('#HTable').addClass('hidden');
+    $('#userTable').addClass('hidden');
 }
 
-//Summit to modify the personal infomation.
-$('#btnModify').click(async function () {
-    //the new password does not match with the repeated one.
-    const checked = $('#chkChgPwd').is(':checked');
-    const password = $('#newPwd1').val();
-    const repeatPassword = $('#newPwd2').val();
-    if (checked && password !== repeatPassword) {
-        $('#infoLabel').text("两次输入的新密码不一样！");
-        $('#infoLabelCon').removeClass("hidden");
-        return;
-    }
-    let user;
-    if (checked) {
-        user = {
-            id: localStorage.getItem("login_user_id"),
-            password: password,
-            phone: $('#phone').val(),
-            name: localStorage.getItem("login_user")
+/**
+ * @param data 用户数据
+ */
+function showUserData(data) {
+    $('#userTable tbody').html('');
+    data.forEach((item) => {
+        const roles = item.roles;
+        let role;
+        if (roles.find(value => {
+            return value.role === '管理员'
+        })) {
+            role = "管理员";
+        } else {
+            role = "普通用户";
         }
-        await updatePwdAndPhone(user, () => {
-            $('#infoLabel').text("恭喜，信息修改成功！");
-            $('#infoLabelCon').removeClass("hidden");
-        }, () => {
-            $('#infoLabel').text("抱歉，信息修改失败！");
-            $('#infoLabelCon').removeClass("hidden");
-        });
-    } else {
-        user = {
-            id: localStorage.getItem("login_user_id"),
-            phone: $('#phone').val()
-        }
-        await updatePhone(user, () => {
-            $('#infoLabel').text("恭喜，信息修改成功！");
-            $('#infoLabelCon').removeClass("hidden");
-        }, () => {
-            $('#infoLabel').text("抱歉，信息修改失败！");
-            $('#infoLabelCon').removeClass("hidden");
-        });
-    }
+        const $tr = $('<tr></tr>');
+        $tr.append("<th scope='row'>" + item.id + "</th>");
+        $tr.append("<td>" + item.name + "</td>");
+        $tr.append("<td>" + item.phone + "</td>");
+        $tr.append("<td>" + role + "</td>");
 
+        const $btnGroup = $('<div class="btn-group" role="group"></div>');
+        // 编辑
+        const $a = $('<button type="button" class="btn btn-success" ><i class="fas fa-edit"></i></button>').attr("id", item.id);
+        // 删除
+        const $b = $('<button type="button" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>').attr("id", item.id);
+        $btnGroup.append($a).append($b);
 
-});
+        $a.click(() => {
+            showEditUserModal({ // 编辑
+                id: item.id,
+                name: item.name,
+                phone: item.phone,
+                roleId: role === "管理员" ? 2 : 1
+            });
+        });
+
+        $b.click(() => {
+            showDeleteUserModal(item.id);
+        });
+
+        const $td = $('<td></td>').append($btnGroup);
+        $tr.append($td);
+
+        $('#userTable tbody').append($tr);
+    });
+    $('#ERTable').addClass('hidden');
+    $('#HTable').addClass('hidden');
+    $('#userTable').removeClass('hidden');
+}
+
+function showEditUserModal(user) {
+    $("#editUserID").val(user.id);
+    $("#editUserName").val(user.name);
+    $("#editUserPhone").val(user.phone);
+    $("#editUserRole").find(`option[value=${user.roleId}]`).attr("selected", true);
+    editUserModal.show();
+}
+
+function showDeleteUserModal(userId) {
+    $("#deleteUserId").text(userId);
+    deleteUserModal.show();
+}
 
 /**
  * 更新用户
@@ -391,4 +680,9 @@ async function updatePhone(user, resolve, reject) {
         reject();
         console.log(e);
     }
+}
+
+function setCurrentPageTitle(title) {
+    $("#current-page-title").text(title);
+    $("#current-page").text(title);
 }

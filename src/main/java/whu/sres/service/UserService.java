@@ -1,6 +1,7 @@
 package whu.sres.service;
 
 import whu.sres.model.User;
+import whu.sres.model.UserRole;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface UserService {
 
     int update(User user);
 
-    int updatePwd(User user);
+    int updatePwdAndPhone(User user);
 
     int updatePhone(User user);
 
@@ -27,4 +28,9 @@ public interface UserService {
 
     List<User> getUsersByPhone(String phone);
 
+    int addUserRole(String userId, int roleId);
+
+    int deleteUserRole(String userId, int roleId);
+
+    List<UserRole> getRoleByUserId(String userId);
 }

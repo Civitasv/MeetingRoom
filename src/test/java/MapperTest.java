@@ -38,4 +38,9 @@ public class MapperTest {
         int res = mapper.add(user);
         System.out.println(res);
     }
+
+    @Test
+    public void testUser() {
+        System.out.println(mapper.getAll());
+    }
 }

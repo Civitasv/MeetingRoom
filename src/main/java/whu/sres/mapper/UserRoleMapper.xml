@@ -8,4 +8,17 @@
         insert into user_role
         values (#{userId}, #{roleId})
     </insert>
+
+    <delete id="delete">
+        delete
+        from user_role
+        where user_id = #{userId}
+          and role_id = #{roleId}
+    </delete>
+
+    <select id="getRoleByUserId" resultType="UserRole">
+        select *
+        from user_role
+        where user_id = #{userId}
+    </select>
 </mapper>

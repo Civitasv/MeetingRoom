@@ -1,5 +1,6 @@
-const room = [220, 301, 313, 320, 504, 429, 430, 431];
+const room = [220, 301, 313, 320, 504, 429, 430, 431, 212];
 const week = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+let loginModal, bookModal;
 let chooseDate = 0;
 
 const showRecordByTimestamp = function (timestamp) {
@@ -47,9 +48,9 @@ const initTableRoom = function () {
 
     $("#content table td").dblclick(function () {
         if (inMemoryToken) {
-            $("#bookingModal").modal('show');
+            bookModal.show();
         } else {
-            $("#loginModal").modal('show');
+            loginModal.show();
         }
     });
 }
@@ -96,14 +97,14 @@ const displayRecords = function (records) {
 
         let $userLink;
         if (state === 0) {
-            $userLink = $("<a tabindex='0'  data-toggle='popover' data-trigger='focus'  title='实际借用人信息' >"
+            $userLink = $("<a tabindex='0'  data-bs-toggle='popover' data-bs-trigger='focus' data-bs-placement='right' title='实际借用人信息' data-bs-content='ss' style='font-weight: bold;color: #009879;'>"
                 + userName + " [待审核]" + "</a>");
         } else {
-            $userLink = $("<a tabindex='0'  data-toggle='popover' data-trigger='focus'  title='实际借用人信息' >"
+            $userLink = $("<a tabindex='0'  data-bs-toggle='popover' data-bs-trigger='focus' data-bs-placement='right' title='实际借用人信息' data-bs-content='ss' style='font-weight: bold;color: #000;'>"
                 + userName + "</a>");
         }
 
-        $userLink.attr("data-content", dataContent);
+        $userLink.attr("data-bs-content", dataContent);
         $userLink.popover({
             html: true
         });
@@ -125,8 +126,7 @@ $('#loginBtn').click(async () => {
     const userId = $("#userName").val();
     const password = $("#password").val();
     if (userId === "" || password === "") {
-        $('#logLabel').removeClass('hidden').empty().append(
-            '<p>用户名和密码不能为空！</p>');
+        alert("用户名和密码不能为空！");
         return;
     }
     try {
@@ -145,10 +145,7 @@ $('#loginBtn').click(async () => {
         if (response.ok) {
             const res = await response.json();
             if (res.code !== 200) {
-                $('#logLabel')
-                    .removeClass('hidden')
-                    .empty()
-                    .append('<p>用户名或者密码错误！</p>');
+                alert("用户名或者密码错误！");
                 return;
             }
             console.log(res);
@@ -164,7 +161,8 @@ $('#loginBtn').click(async () => {
             $("#btnLogin").addClass('hidden');
             $('#btnLogout').removeClass(
                 'hidden');
-            $("#loginModal").modal('hide');
+            console.log("登录成功")
+            loginModal.hide();
         } else {
             console.log(response.statusText)
         }
@@ -222,53 +220,44 @@ $('#bookingBtn').click(() => {
     const userId = localStorage.getItem("login_user_id");
     const a = /^(([01]?[0-9])|(2[0-3])):[03]?[0]$/;
     if (!a.test(startTime)) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>开始时间格式不正确，只能是7:00或者7:30这种整点格式！</p>');
+        alert("开始时间格式不正确，只能是7:00或者7:30这种整点格式！");
         return;
     }
 
     if (!a.test(endTime)) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>结束时间格式不正确，只能是7:00或者7:30这种整点格式！</p>');
+        alert("结束时间格式不正确，只能是7:00或者7:30这种整点格式！");
         return;
     }
 
     if (startTimestamp < 420) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>开始时间不能早于7:00！</p>');
+        alert("开始时间不能早于7:00！");
         return;
     }
 
     if (startTimestamp > 1320) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>开始时间不能晚于22:00！</p>');
+        alert("开始时间不能晚于22:00！");
         return;
     }
     if (endTimestamp > 1350) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>结束时间不能晚于22:30！</p>');
+        alert("结束时间不能晚于22:30！");
         return;
     }
     if (endTimestamp < 450) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>结束时间不能早于7:30！</p>');
+        alert("结束时间不能早于7:30！");
         return;
     }
     if (startTimestamp >= endTimestamp) {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>结束时间段必须晚于开始时间段，请检查预订的时间段！</p>');
+        alert("结束时间段必须晚于开始时间段，请检查预订的时间段！");
         return;
     }
 
-    if (actualUser.trim() === "") {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>联系人信息不能为空！</p>');
+    if (actualUser === "") {
+        alert("联系人信息不能为空！");
         return;
     }
 
-    if (phoneNum.trim() === "") {
-        $('#bookingMsg').removeClass('hidden').empty()
-            .append('<p>电话信息不能为空！</p>');
+    if (phoneNum === "") {
+        alert("电话信息不能为空！");
         return;
     }
 
@@ -290,26 +279,20 @@ $('#bookingBtn').click(() => {
         headers: {"Authorization": inMemoryToken["token"]}
     }).done(function (res) {
         if (res.code !== 201) {
-            $('#bookingMsg').removeClass('hidden').empty()
-                .append('<p>预定失败，请检查预约时间段或稍后重试</p>');
+            alert("预定失败，请检查预约时间段或稍后重试");
             return;
         }
         if (room === '301') {
-            $('#bookingMsg').removeClass('hidden').empty()
-                .append('<p>已提交301会议室预订申请！</p>');
             alert("已提交申请，请尽快联系院办321魏秀琴老师审批！");
         } else {
-            $('#bookingMsg').removeClass('hidden').empty()
-                .append('<p>恭喜您，已经预订成功！</p>');
             alert("恭喜您，已经预订成功！");
         }
-        $("#bookingModal").modal('hide');
+        bookModal.hide();
         showRecordByTimestamp(timestamp);
     }).fail(function () {
+        alert("预定失败，请检查预约时间段或稍后重试");
         console.log("error");
-    }).always(function () {
-        console.log("complete");
-    })
+    });
 });
 $('.spinner .btn:first-of-type').on('click', function () {
     const btn = $(this);
@@ -395,12 +378,12 @@ async function syncLogout(event) {
         } catch (e) {
             console.log(e);
         }
-        $("#loginModal").modal('show');
+        loginModal.show();
     }
 }
 
 function toLogin() {
-    $("#loginModal").modal('show');
+    loginModal.show();
 }
 
 function toLogout() {
@@ -411,6 +394,8 @@ function toLogout() {
 
 $(function () {
     chooseDate = dateStringToTimestamp(formatDateYYYYMMSS(new Date())); // 默认选择今天
+    loginModal = new bootstrap.Modal(document.getElementById("loginModal"), {});
+    bookModal = new bootstrap.Modal(document.getElementById("bookingModal"), {});
     $("#bookingDate").val(formatDateYYYYMMSS(timestampToDate(chooseDate)));
     showRecordByTimestamp(chooseDate);
     $('#bookingDate, #selectDate').datepicker({
@@ -427,6 +412,9 @@ $(function () {
         $('#btnLogout').addClass('hidden');
         await logout();
     });
+    $("#help").click(() => {
+        window.location.href = `${base}/help`;
+    });
     $('#bookingDate, #bookingRoom').change(changeBookingDateOrRoom);
     onLogout(syncLogout);
     auth(toLogin, toLogout).then(() => {
@@ -439,6 +427,5 @@ $(function () {
                 'hidden');
             startCountdown(toLogin, toLogout);
         }
-    }, () => {
     })
 });

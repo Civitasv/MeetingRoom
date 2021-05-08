@@ -11,7 +11,7 @@ public interface RecordMapper {
 
     List<Record> getRecordByTimestamp(long timestamp);
 
-    List<Record> getRecordBeforeStartTimestamp(long timestamp);
+    List<Record> getRecordBeforeEndTimestamp(long timestamp);
 
     List<Record> getRecordByRoomAndTimestamp(String room, long timestamp);
 

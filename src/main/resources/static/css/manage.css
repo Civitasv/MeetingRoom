@@ -1,0 +1,78 @@
+.card {
+    margin-bottom: 2.2rem;
+    border: none;
+}
+
+.card .card-header {
+    border: none;
+}
+
+.card .card-header ~ .card-body {
+    padding-top: 0;
+}
+
+.card .card-body {
+    padding: 1.5rem;
+}
+
+.dataTable-top, .dataTable-bottom {
+    padding: 8px 10px;
+}
+
+.dataTable-top > div:first-child, .dataTable-bottom > div:first-child {
+    float: left;
+}
+
+.dataTable-dropdown {
+    display: inline-flex;
+    align-items: center;
+}
+
+.dataTable-top > div:last-child, .dataTable-bottom > div:last-child {
+    float: right;
+}
+
+.dataTable-container {
+    overflow-x: auto;
+}
+
+.dataTable-table {
+    max-width: 100%;
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: separate;
+}
+
+.dataTable-info {
+    margin: 7px 0;
+}
+
+.page-item:first-child {
+    margin-right: .4rem;
+}
+
+.page-item:last-child {
+    margin-left: .4rem;
+}
+
+.dataTable-input {
+    min-height: calc(1.5em + .934rem + 2px);
+    padding: .467rem .6rem;
+    font-size: .9025rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #555252;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #dfe3e7;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.dataTable-dropdown label {
+    white-space: nowrap;
+    margin-left: 15px;
+}

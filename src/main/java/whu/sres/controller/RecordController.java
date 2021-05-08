@@ -53,7 +53,7 @@ public class RecordController {
 
     @GetMapping("/canRevoke")
     public String canRevoke() {
-        List<Record> records = recordService.getRecordBeforeStartTimestamp(System.currentTimeMillis() / 1000);
+        List<Record> records = recordService.getRecordBeforeEndTimestamp(System.currentTimeMillis() / 1000);
         return new Result<List<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 

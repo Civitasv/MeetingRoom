@@ -7,11 +7,18 @@
     <title>资环院会议室预订系统</title>
 
 
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}">
-    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+    <!-- Favicon -->
+    <link href="/assets/img/brand/favicon.png" rel="icon" type="image/png">
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker3.standalone.min.css}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
+    <!-- 自定义css -->
     <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
     <style>
         body {
             background-color: #eee;
@@ -162,8 +169,11 @@
 
 </div>
 
+<!-- jquery -->
 <script th:src="@{/scripts/jquery-3.2.1.js}"></script>
-<script th:src="@{/scripts/popper.js}"></script>
-<script th:src="@{/scripts/bootstrap.js}"></script>
+<!-- bootstrap -->
+<script th:src="@{/scripts/bootstrap.bundle.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.min.js}"></script>
+<script th:src="@{/scripts/bootstrap-datepicker.zh-CN.min.js}"></script>
 </body>
 </html>
