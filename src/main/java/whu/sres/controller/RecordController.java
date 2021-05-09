@@ -54,9 +54,9 @@ public class RecordController {
     }
 
     @GetMapping("/canRevoke")
-    public String canRevoke(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+    public String canRevoke(@RequestParam String id, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
         PageHelper.startPage(page, size);
-        PageInfo<Record> records = new PageInfo<>(recordService.getRecordBeforeEndTimestamp(System.currentTimeMillis() / 1000));
+        PageInfo<Record> records = new PageInfo<>(recordService.getRecordBeforeEndTimestamp(id, System.currentTimeMillis() / 1000));
         return new Result<PageInfo<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 

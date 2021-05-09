@@ -9,7 +9,7 @@ public interface RecordService {
 
     List<Record> getRecordByTimestamp(long timestamp);
 
-    List<Record> getRecordBeforeEndTimestamp(long timestamp);
+    List<Record> getRecordBeforeEndTimestamp(String userId, long timestamp);
 
     List<Record> getRecordByRoomAndTimestamp(String room, long timestamp);
 

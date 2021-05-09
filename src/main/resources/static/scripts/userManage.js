@@ -357,7 +357,8 @@ function showUserInfo() {
 }
 
 async function getCanRevokeData(page, size) {
-    const url = `${base}/record/canRevoke?page=${page}&size=${size}`
+    const userId = localStorage.getItem("login_user_id");
+    const url = `${base}/record/canRevoke?id=${userId}&page=${page}&size=${size}`
     try {
         const response = await fetch(url, {
             method: 'GET',

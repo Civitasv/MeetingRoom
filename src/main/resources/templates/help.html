@@ -8,7 +8,7 @@
 
 
     <!-- Favicon -->
-    <link href="/assets/img/brand/favicon.png" rel="icon" type="image/png">
+    <link th:href="@{/images/icon.png}" rel="icon" type="image/png">
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -67,7 +67,7 @@
                         版本号：
                     </th>
                     <td>
-                        4.0.0
+                        3.0.0 -> 4.0.0
                     </td>
                 </tr>
                 <tr>
@@ -92,21 +92,21 @@
                         更新说明：
                     </th>
                     <td>
-                        <ul>
-                            <li class="list-unstyled">
+                        <ul class="list-unstyled">
+                            <li>
                                 1.预订时间更加细化，可以只预订半个小时，最短预订时间不再只能半天；
                             </li>
-                            <li class="list-unstyled">
+                            <li>
                                 2.预订流程进行了简化，尽可能减少了一些不必要的步骤；
                             </li>
-                            <li class="list-unstyled">
+                            <li>
                                 3.界面进行了一定程度上的优化；
                             </li>
-                            <li class="list-unstyled">
+                            <li>
                                 4.添加管理界面，大幅度修改UI；
                             </li>
-                            <li class="list-unstyled">
-                                5.本系统暂<span style="color:#e00;"><strong>不支持IE浏览器</strong></span>，谷歌浏览器和火狐浏览器均已通过测试。
+                            <li>
+                                5.本系统暂<span style="color:#e00;"><strong>不支持IE浏览器</strong></span>，谷歌浏览器、火狐浏览器和Edge浏览器均已通过测试。
                             </li>
                         </ul>
                     </td>
@@ -159,25 +159,44 @@
     </div>
 </div>
 
-<div style="text-align:center">
+<div class="container center" style="text-align:center">
 
     <figure class="figure">
-        <img th:src="@{/images/help-home.png}" class="figure-img img-fluid" style="width:1024px; height:768px;"/>
+        <img th:src="@{/images/help-home.png}" class="figure-img img-fluid" alt="主页" style="width: 80%"/>
         <figcaption class="figure-caption">系统主页面</figcaption>
     </figure>
     <br/>
     <figure class="figure">
-        <img th:src="@{/images/help-bookingdialog.png}" class="figure-img img-fluid"
-             style="width:600px;height:800px;"/>
+        <img th:src="@{/images/help-bookingdialog.png}" class="figure-img img-fluid" alt="预订" style="width: 60%"/>
         <figcaption class="figure-caption">预订页面</figcaption>
     </figure>
 
     <br/>
     <figure class="figure">
-        <img th:src="@{/images/help-cancel.png}" class="figure-img img-fluid" style="width:900px;height:400px;"/>
+        <img th:src="@{/images/help-cancel.png}" class="figure-img img-fluid" style="width: 60%"/>
         <figcaption class="figure-caption">撤销会议室</figcaption>
     </figure>
 
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-user-edit.png}" class="figure-img img-fluid" style="width: 60%"/>
+        <figcaption class="figure-caption">个人信息修改</figcaption>
+    </figure>
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-history.png}" class="figure-img img-fluid" style="width: 60%"/>
+        <figcaption class="figure-caption">历史预定记录</figcaption>
+    </figure>
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-admin-user-manage.png}" class="figure-img img-fluid" style="width: 60%"/>
+        <figcaption class="figure-caption">【管理员】用户管理</figcaption>
+    </figure>
+    <br/>
+    <figure class="figure">
+        <img th:src="@{/images/help-admin-agree.png}" class="figure-img img-fluid" style="width: 60%"/>
+        <figcaption class="figure-caption">【管理员】预约审核</figcaption>
+    </figure>
 </div>
 
 <!-- jquery -->

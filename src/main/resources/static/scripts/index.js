@@ -48,6 +48,7 @@ const initTableRoom = function () {
 
     $("#content table td").dblclick(function () {
         if (inMemoryToken) {
+            changeBookingDateOrRoom();
             bookModal.show();
         } else {
             loginModal.show();
@@ -148,7 +149,6 @@ $('#loginBtn').click(async () => {
                 alert("用户名或者密码错误！");
                 return;
             }
-            console.log(res);
             const {access_token, access_token_expiry, user_id, user_name, user_roles, user_phone} = res.data;
             login({access_token, access_token_expiry});
             localStorage.setItem("login_user", user_name);
@@ -156,7 +156,7 @@ $('#loginBtn').click(async () => {
             localStorage.setItem("login_user_roles", JSON.stringify(user_roles));
             localStorage.setItem("login_user_phone", user_phone);
             startCountdown(toLogin, toLogout);
-            $("#userLabel").text(user_name).removeClass(
+            $("#userLabel").text(user_name).parent("#toManage").removeClass(
                 'hidden');
             $("#btnLogin").addClass('hidden');
             $('#btnLogout').removeClass(
@@ -316,7 +316,7 @@ $('.spinner .btn:last-of-type').on('click', function () {
     }
 });
 
-$("#userLabel").click(() => {
+$("#toManage").click(() => {
     window.location.href = `${base}/manage`;
 });
 
@@ -335,7 +335,7 @@ function changeBookingDateOrRoom() {
         }
         const unavailableRooms = res.data;
 
-        $('.bg-danger').removeClass('bg-danger');
+        $('.styled-table tbody tr td.active').removeClass('active');
         unavailableRooms.forEach(item => {
             const start = item.start;
             const end = item.end;
@@ -343,7 +343,7 @@ function changeBookingDateOrRoom() {
             const first = (start - time - extra) / 1800; // 开始id
             const last = (end - time - extra) / 1800; // 结束id
             for (let i = first; i < last; i++) {
-                $('#' + (i + 1)).addClass("bg-danger");
+                $('#' + (i + 1)).addClass("active");
             }
         })
     }).fail(function () {
@@ -357,7 +357,7 @@ async function syncLogout(event) {
             return;
         }
         console.log('logged out from storage!')
-        $('#userLabel').empty().addClass('hidden');
+        $('#toManage').empty().addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
         inMemoryToken = null; // 将token置空
@@ -387,7 +387,7 @@ function toLogin() {
 }
 
 function toLogout() {
-    $('#userLabel').empty().addClass('hidden');
+    $('#toManage').empty().addClass('hidden');
     $('#btnLogin').removeClass('hidden');
     $('#btnLogout').addClass('hidden');
 }
@@ -407,7 +407,7 @@ $(function () {
         alert("此功能还在开发中，敬请期待！");
     });
     $("#btnLogout").click(async () => {
-        $('#userLabel').empty().addClass('hidden');
+        $('#toManage').empty().addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
         await logout();
@@ -420,7 +420,7 @@ $(function () {
     auth(toLogin, toLogout).then(() => {
         // 刷新是否成功
         if (isLogin()) {
-            $("#userLabel").text(localStorage.getItem("login_user")).removeClass(
+            $("#userLabel").text(localStorage.getItem("login_user")).parent("#toManage").removeClass(
                 'hidden');
             $("#btnLogin").addClass('hidden');
             $('#btnLogout').removeClass(

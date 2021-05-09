@@ -30,24 +30,29 @@
         select *
         from book_record
         where id = #{id}
+        order by start
     </select>
 
     <select id="getRecordByTimestamp" resultMap="withUser">
         select *
         from book_record
         where date = #{timestamp}
+        order by start
     </select>
 
     <select id="getRecordBeforeEndTimestamp" resultMap="withUser">
         select *
         from book_record
-        where end &gt; #{timestamp}
+        where user_id = #{userId}
+          and end &gt; #{timestamp}
+        order by start
     </select>
 
     <select id="getRecordByState" resultMap="withUser">
         select *
         from book_record
         where state = #{state}
+        order by start
     </select>
 
     <insert id="add">
@@ -85,12 +90,14 @@
         from book_record
         where room = #{room}
           and date = #{timestamp}
+        order by start
     </select>
 
     <select id="getRecordByUserId" resultMap="withUser">
         select *
         from book_record
         where user_id = #{userId}
+        order by start
     </select>
 
 </mapper>

@@ -8,7 +8,7 @@
     <title>资环院会议室预订系统</title>
 
     <!-- Favicon -->
-    <link href="/assets/img/brand/favicon.png" rel="icon" type="image/png">
+    <link th:href="@{/images/icon.png}" rel="icon" type="image/png">
 
     <!-- bootstrap -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -75,12 +75,13 @@
                     </li>
                 </ul>
                 <ul class="nav justify-content-end">
-                    <li class="nav-item m-1 me-2 styled-li">
-                        <span id="userLabel" class="hidden"></span>
+                    <li class="nav-item m-1 me-2 styled-li hidden" id="toManage">
+                        <i class="far fa-user me-0"></i>
+                        <span id="userLabel"></span>
                     </li>
-                    <li class="nav-item m-1 me-2 styled-li" id="btnLogin">
-                        <span class="me-0" data-bs-toggle="modal"
-                              data-bs-target="#loginModal">登录
+                    <li class="nav-item m-1 me-2 styled-li" id="btnLogin" data-bs-toggle="modal"
+                        data-bs-target="#loginModal">
+                        <span class="me-0">登录
                         </span>
                         <i class="fas fa-sign-in-alt"></i>
                     </li>
@@ -290,8 +291,8 @@
                         </div>
                     </form>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <caption>红色表示该时间段不可用；表格中时间表示开始时间，如：8:00指 8:00-8:30 时间段。</caption>
+                        <table class="table table-bordered table-sm styled-table">
+                            <caption>橙色表示该时间段不可用；表格中时间表示开始时间，如：7:00指 7:00-7:30 时间段。</caption>
                             <tr>
                                 <th scope="row">上午</th>
                                 <td id="1">7:00</td>

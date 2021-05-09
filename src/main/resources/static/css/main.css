@@ -135,6 +135,12 @@
     text-align: left;
 }
 
+.styled-table tbody tr td.active {
+    background-color: #e45826;
+    color: #ffffff;
+    text-align: left;
+}
+
 .styled-table th,
 .styled-table td {
     padding: 6px 8px;

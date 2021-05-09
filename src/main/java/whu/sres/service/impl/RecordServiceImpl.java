@@ -28,8 +28,8 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<Record> getRecordBeforeEndTimestamp(long timestamp) {
-        return recordMapper.getRecordBeforeEndTimestamp(timestamp);
+    public List<Record> getRecordBeforeEndTimestamp(String userId, long timestamp) {
+        return recordMapper.getRecordBeforeEndTimestamp(userId, timestamp);
     }
 
     @Override
