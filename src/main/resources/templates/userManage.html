@@ -80,7 +80,9 @@
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a th:href="@{~/manage}">会议室预订系统</a></li>
+                                    <li class="breadcrumb-item">
+                                        <a th:href="@{~/manage}" class="link-dark text-decoration-none">会议室预订系统</a>
+                                    </li>
                                     <li class="breadcrumb-item active" aria-current="page" id="current-page"></li>
                                 </ol>
                             </nav>
@@ -160,28 +162,24 @@
                                 </div>
                             </div>
 
-                            <div class="dataTable_wrapper d-flex flex-column" id="dataTable">
+                            <div class="dataTable_wrapper d-flex flex-column" id="ERTable">
                                 <div class="dataTable-top">
                                     <div class="dataTable-dropdown">
-                                        <select class="dataTable-selector form-select" id="perPageNum">
+                                        <select class="dataTable-selector form-select" id="revokePerPageNum">
                                             <option value="5">5</option>
                                             <option value="10" selected="">10</option>
                                             <option value="15">15</option>
                                             <option value="20">20</option>
                                             <option value="25">25</option>
                                         </select>
-                                        <label for="perPageNum">每页数量</label>
+                                        <label for="revokePerPageNum">每页数量</label>
                                     </div>
                                     <div class="dataTable-search">
-                                        <button class="btn btn-secondary hidden" type="button" data-bs-toggle="modal"
-                                                data-bs-target="#addUserModal" id="addUserBtn">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <input class="dataTable-input" placeholder="搜索" type="text">
+                                        <!--<input class="dataTable-input" placeholder="搜索" type="text">-->
                                     </div>
                                 </div>
                                 <div class="dataTable-container table-responsive">
-                                    <table class="table table-striped dataTable-table text-center" id="ERTable">
+                                    <table class="table table-striped dataTable-table text-center">
                                         <thead>
                                         <tr>
                                             <th scope="col">序号</th>
@@ -198,8 +196,40 @@
                                         <tbody>
                                         </tbody>
                                     </table>
-                                    <table id="HTable"
-                                           class="table table-striped dataTable-table text-center hidden">
+                                </div>
+                                <div class="dataTable-bottom">
+                                    <div class="dataTable-info"></div>
+                                    <ul class="pagination pagination-primary float-end dataTable-pagination">
+                                        <li class="page-item pager cursor"><a class="page-link" data-page="1">‹</a>
+                                        </li>
+                                        <li class="page-item active cursor"><a class="page-link" data-page="1">1</a>
+                                        </li>
+                                        <li class="page-item cursor"><a class="page-link" data-page="2">2</a></li>
+                                        <li class="page-item cursor"><a class="page-link" data-page="3">3</a></li>
+                                        <li class="page-item pager cursor"><a class="page-link" data-page="2">›</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="dataTable_wrapper d-flex flex-column hidden" id="HTable">
+                                <div class="dataTable-top">
+                                    <div class="dataTable-dropdown">
+                                        <select class="dataTable-selector form-select" id="historyPerPageNum">
+                                            <option value="5">5</option>
+                                            <option value="10" selected="">10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                            <option value="25">25</option>
+                                        </select>
+                                        <label for="historyPerPageNum">每页数量</label>
+                                    </div>
+                                    <div class="dataTable-search">
+                                        <!--<input class="dataTable-input" placeholder="搜索" type="text">-->
+                                    </div>
+                                </div>
+                                <div class="dataTable-container table-responsive">
+                                    <table class="table table-striped dataTable-table text-center">
                                         <thead>
                                         <tr>
                                             <th scope="col">序号</th>
@@ -216,8 +246,48 @@
 
                                         </tbody>
                                     </table>
-                                    <table class="table table-striped dataTable-table text-center hidden"
-                                           id="userTable">
+                                </div>
+                                <div class="dataTable-bottom">
+                                    <div class="dataTable-info"></div>
+                                    <ul class="pagination pagination-primary float-end dataTable-pagination">
+                                        <li class="page-item pager cursor"><a href="#" class="page-link"
+                                                                              data-page="1">‹</a>
+                                        </li>
+                                        <li class="page-item active cursor"><a href="#" class="page-link" data-page="1">1</a>
+                                        </li>
+                                        <li class="page-item cursor hidden"><a href="#" class="page-link" data-page="2">2</a>
+                                        </li>
+                                        <li class="page-item cursor"><a href="#" class="page-link" data-page="3">3</a>
+                                        </li>
+                                        <li class="page-item pager cursor"><a href="#" class="page-link"
+                                                                              data-page="2">›</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="dataTable_wrapper d-flex flex-column hidden" id="userTable">
+                                <div class="dataTable-top">
+                                    <div class="dataTable-dropdown">
+                                        <select class="dataTable-selector form-select" id="userPerPageNum">
+                                            <option value="5">5</option>
+                                            <option value="10" selected>10</option>
+                                            <option value="15">15</option>
+                                            <option value="20">20</option>
+                                            <option value="25">25</option>
+                                        </select>
+                                        <label for="userPerPageNum">每页数量</label>
+                                    </div>
+                                    <div class="dataTable-search">
+                                        <button class="btn btn-secondary" type="button" data-bs-toggle="modal"
+                                                data-bs-target="#addUserModal" id="addUserBtn">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <!--<input class="dataTable-input" placeholder="搜索" type="text">-->
+                                    </div>
+                                </div>
+                                <div class="dataTable-container table-responsive">
+                                    <table class="table table-striped dataTable-table text-center">
                                         <thead>
                                         <tr>
                                             <th scope="col">用户ID</th>
@@ -232,19 +302,22 @@
                                     </table>
                                 </div>
                                 <div class="dataTable-bottom">
-                                    <div class="dataTable-info" id="showing"></div>
+                                    <div class="dataTable-info"></div>
                                     <ul class="pagination pagination-primary float-end dataTable-pagination">
-                                        <li class="page-item pager"><a href="#" class="page-link" data-page="1">‹</a>
+                                        <li class="page-item pager cursor"><a class="page-link" data-page="1">‹</a>
                                         </li>
-                                        <li class="page-item active"><a href="#" class="page-link" data-page="1">1</a>
+                                        <li class="page-item active cursor"><a class="page-link" data-page="1">1</a>
                                         </li>
-                                        <li class="page-item"><a href="#" class="page-link" data-page="2">2</a></li>
-                                        <li class="page-item"><a href="#" class="page-link" data-page="3">3</a></li>
-                                        <li class="page-item pager"><a href="#" class="page-link" data-page="2">›</a>
+                                        <li class="page-item cursor"><a class="page-link" data-page="2">2</a>
+                                        </li>
+                                        <li class="page-item cursor"><a class="page-link" data-page="3">3</a>
+                                        </li>
+                                        <li class="page-item pager cursor"><a class="page-link" data-page="2">›</a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </section>

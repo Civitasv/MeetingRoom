@@ -32,5 +32,7 @@ public interface UserService {
 
     int deleteUserRole(String userId, int roleId);
 
+    int deleteUserRoleByUserId(String userId);
+
     List<UserRole> getRoleByUserId(String userId);
 }

@@ -13,7 +13,7 @@ $(function () {
             showUserInfo();
             // 默认展示预约历史数据
             setCurrentPageTitle("撤销会议室");
-            await getCanRevokeData();
+            await getCanRevokeData(1, $("#revokePerPageNum").val());
         }
     }, () => {
     })
@@ -23,44 +23,51 @@ $(function () {
 
     $("#revokeMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
-        $('#dataTable').removeClass('hidden');
-        $("#addUserBtn").addClass("hidden");
+        $('.dataTable_wrapper').removeClass('hidden');
+        $('#HTable').addClass('hidden');
+        $('#ERTable').removeClass('hidden');
+        $('#userTable').addClass('hidden');
         // 展示可以撤销的数据
         setCurrentPageTitle("撤销会议室");
-        await getCanRevokeData();
+        await getCanRevokeData(1, $("#revokePerPageNum").val());
     });
 
     $("#historyMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
-        $('#dataTable').removeClass('hidden');
-        $("#addUserBtn").addClass("hidden");
+        $('.dataTable_wrapper').removeClass('hidden');
+        $('#ERTable').addClass('hidden');
+        $('#HTable').removeClass('hidden');
+        $('#userTable').addClass('hidden');
         // 展示预约历史数据
         setCurrentPageTitle("历史预订记录");
-        await getHistoryData();
+        await getHistoryData(1, $("#historyPerPageNum").val());
     })
 
     $("#examineHMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
-        $('#dataTable').removeClass('hidden');
-        $("#addUserBtn").addClass("hidden");
+        $('.dataTable_wrapper').removeClass('hidden');
+        $('#ERTable').removeClass('hidden');
+        $('#HTable').addClass('hidden');
+        $('#userTable').addClass('hidden');
         // 展示管理员审核数据
         setCurrentPageTitle("预定审核");
-        await getExamineData();
+        await getExamineData(1, $("#revokePerPageNum").val());
     });
 
     $("#userManage").click(async () => {
         $('#editPersonInfo').addClass('hidden');
-        $('#dataTable').removeClass('hidden');
-        $("#addUserBtn").removeClass("hidden");
+        $('.dataTable_wrapper').removeClass('hidden');
+        $('#ERTable').addClass('hidden');
+        $('#HTable').addClass('hidden');
+        $('#userTable').removeClass('hidden');
         // 展示所有用户
         setCurrentPageTitle("用户管理");
-        await getUserData();
+        await getUserData(1, $("#userPerPageNum").val());
     });
 
     $("#editUserInfo").click(async () => {
-        $('#dataTable').addClass('hidden');
+        $('.dataTable_wrapper').addClass('hidden');
         $('#editPersonInfo').removeClass('hidden');
-        $("#addUserBtn").addClass("hidden");
         setCurrentPageTitle("信息修改");
         const userId = localStorage.getItem("login_user_id");
         const userName = localStorage.getItem("login_user");
@@ -144,16 +151,16 @@ $(function () {
             alert("用户ID不可以为空！");
             return;
         }
+        if (name === "") {
+            alert("用户名不可以为空！");
+            return;
+        }
         if (password === "") {
             alert("密码不可以为空！");
             return;
         }
         if (phone === "") {
             alert("手机号码不可以为空！");
-            return;
-        }
-        if (name === "") {
-            alert("用户名不可以为空！");
             return;
         }
         await addUser({
@@ -175,12 +182,12 @@ $(function () {
             alert("用户ID不可以为空！");
             return;
         }
-        if (phone === "") {
-            alert("手机号码不可以为空！");
-            return;
-        }
         if (name === "") {
             alert("用户名不可以为空！");
+            return;
+        }
+        if (phone === "") {
+            alert("手机号码不可以为空！");
             return;
         }
         await updateUser({
@@ -194,6 +201,42 @@ $(function () {
         const userId = $("#deleteUserId").text();
         await deleteUser(userId);
     });
+
+    $("#userTable .page-link").click(async function () {
+        await getUserData($(this).attr("data-page"), $("#userPerPageNum option:selected").attr("value"));
+    })
+
+    $("#ERTable .page-link").click(async function () {
+        if ($("#current-page-title").text() === "撤销会议室") {
+            await getCanRevokeData($(this).attr("data-page"), $("#revokePerPageNum option:selected").attr("value"));
+        } else {
+            await getExamineData($(this).attr("data-page"), $("#revokePerPageNum option:selected").attr("value"));
+        }
+    })
+
+    $("#HTable .page-link").click(async function () {
+        await getHistoryData($(this).attr("data-page"), $("#historyPerPageNum option:selected").attr("value"));
+    })
+
+    $("#userPerPageNum").change(async () => {
+        initPagination("userTable");
+        await getUserData(1, $("#userPerPageNum option:selected").attr("value"));
+    })
+
+    $("#revokePerPageNum").change(async () => {
+        initPagination("ERTable");
+        // 刷新
+        if ($("#current-page-title").text() === "撤销会议室") {
+            await getCanRevokeData(1, $("#revokePerPageNum option:selected").attr("value"));
+        } else {
+            await getExamineData(1, $("#revokePerPageNum option:selected").attr("value"));
+        }
+    })
+
+    $("#historyPerPageNum").change(async () => {
+        initPagination("HTable");
+        await getHistoryData(1, $("#historyPerPageNum option:selected").attr("value"));
+    })
 });
 
 async function addUser(user) {
@@ -220,7 +263,7 @@ async function addUser(user) {
             // 模态框消失
             addUserModal.hide();
             // 重新展示用户数据
-            await getUserData();
+            await getUserData($("#userTable .active>a").attr("data-page"), $("#userPerPageNum option:selected").attr("value"));
         } else {
             console.log(response.statusText);
             alert("添加用户失败！");
@@ -255,7 +298,7 @@ async function updateUser(user) {
             // 模态框消失
             editUserModal.hide();
             // 重新展示用户数据
-            await getUserData();
+            await getUserData($("#userTable .active>a").attr("data-page"), $("#userPerPageNum option:selected").attr("value"));
         } else {
             console.log(response.statusText);
             alert("更新用户失败！");
@@ -289,7 +332,7 @@ async function deleteUser(userId) {
             // 模态框消失
             deleteUserModal.hide();
             // 重新展示用户数据
-            await getUserData();
+            await getUserData($("#userTable .active>a").attr("data-page"), $("#userPerPageNum option:selected").attr("value"));
         } else {
             console.log(response.statusText);
             alert("删除用户失败！");
@@ -313,8 +356,8 @@ function showUserInfo() {
     }
 }
 
-async function getCanRevokeData() {
-    const url = `${base}/record/canRevoke`
+async function getCanRevokeData(page, size) {
+    const url = `${base}/record/canRevoke?page=${page}&size=${size}`
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -335,9 +378,9 @@ async function getCanRevokeData() {
     }
 }
 
-async function getHistoryData() {
+async function getHistoryData(page, size) {
     const userId = localStorage.getItem("login_user_id");
-    const url = `${base}/record/history?id=${userId}`
+    const url = `${base}/record/history?id=${userId}&page=${page}&size=${size}`
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -358,8 +401,8 @@ async function getHistoryData() {
     }
 }
 
-async function getExamineData() {
-    const url = `${base}/record/examine`
+async function getExamineData(page, size) {
+    const url = `${base}/record/examine?page=${page}&size=${size}`
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -381,8 +424,8 @@ async function getExamineData() {
 }
 
 
-async function getUserData() {
-    const url = `${base}/user/all`
+async function getUserData(page, size) {
+    const url = `${base}/user/all?page=${page}&size=${size}`
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -418,6 +461,12 @@ async function revokeRecord(id) {
             if (res.code === 200) {
                 $('#' + id).parents('tr').empty().remove();
                 alert("已撤销该会议室预订！");
+                // 刷新
+                if ($("#current-page-title").text() === "撤销会议室") {
+                    await getCanRevokeData($("#ERTable .active>a").attr("data-page"), $("#revokePerPageNum option:selected").attr("value"));
+                } else {
+                    await getExamineData($("#ERTable .active>a").attr("data-page"), $("#revokePerPageNum option:selected").attr("value"));
+                }
             }
         } else {
             console.log(response.statusText)
@@ -443,6 +492,8 @@ async function agreeRecord(id, $a, $b) {
                 $a.removeAttr('onclick');
                 $b.addClass('hidden');
                 alert("已批准该会议室预订！");
+                // 刷新
+                await getExamineData($("#ERTable .active>a").attr("data-page"), $("#revokePerPageNum option:selected").attr("value"));
             }
         } else {
             console.log(response.statusText)
@@ -457,7 +508,14 @@ async function agreeRecord(id, $a, $b) {
  */
 function showRevokeTable(data) {
     $('#ERTable tbody').html('');
-    data.forEach((item, i) => {
+    // 获取分页相关信息
+    const pageNum = data.pageNum; // 当前显示页
+    const prePage = data.prePage; // 前一页页码
+    const nextPage = data.nextPage; // 下一页页码
+    const total = data.pages; // 总页码
+
+    setPagination("ERTable", {pageNum, prePage, nextPage, total});
+    data.list.forEach((item, i) => {
         const $tr = $('<tr></tr>');
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
@@ -475,9 +533,6 @@ function showRevokeTable(data) {
         $tr.append($td);
         $('#ERTable tbody').append($tr);
     });
-    $('#HTable').addClass('hidden');
-    $('#ERTable').removeClass('hidden');
-    $('#userTable').addClass('hidden');
 }
 
 /**
@@ -485,7 +540,14 @@ function showRevokeTable(data) {
  */
 function showHistoryData(data) {
     $('#HTable tbody').html('');
-    data.forEach((item, i) => {
+    // 获取分页相关信息
+    const pageNum = data.pageNum; // 当前显示页
+    const prePage = data.prePage; // 前一页页码
+    const nextPage = data.nextPage; // 下一页页码
+    const total = data.pages; // 总页码
+
+    setPagination("HTable", {pageNum, prePage, nextPage, total});
+    data.list.forEach((item, i) => {
         const $tr = $('<tr></tr>');
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
@@ -498,9 +560,6 @@ function showHistoryData(data) {
 
         $('#HTable tbody').append($tr);
     });
-    $('#ERTable').addClass('hidden');
-    $('#HTable').removeClass('hidden');
-    $('#userTable').addClass('hidden');
 }
 
 /**
@@ -508,7 +567,15 @@ function showHistoryData(data) {
  */
 function showExamineData(data) {
     $('#ERTable tbody').html('');
-    data.forEach((item, i) => {
+    // 获取分页相关信息
+    const pageNum = data.pageNum; // 当前显示页
+    const prePage = data.prePage; // 前一页页码
+    const nextPage = data.nextPage; // 下一页页码
+    const total = data.pages; // 总页码
+
+    setPagination("ERTable", {pageNum, prePage, nextPage, total});
+
+    data.list.forEach((item, i) => {
         const $tr = $('<tr></tr>');
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
@@ -543,9 +610,52 @@ function showExamineData(data) {
 
         $('#ERTable tbody').append($tr);
     });
-    $('#ERTable').removeClass('hidden');
-    $('#HTable').addClass('hidden');
-    $('#userTable').addClass('hidden');
+}
+
+function initPagination(id) {
+    $(`#${id} .page-item:nth-child(1) > a`).attr("data-page", 1).parent(".page-item").removeClass("disabled");
+    $(`#${id} .page-item:nth-child(2) > a`).attr("data-page", 1).text(1).parent(".page-item").addClass("active");
+    $(`#${id} .page-item:nth-child(3) > a`).attr("data-page", 2).text(2).parent(".page-item").removeClass("hidden");
+    $(`#${id} .page-item:nth-child(4) > a`).attr("data-page", 3).text(3).parent(".page-item").removeClass("hidden");
+    $(`#${id} .page-item:nth-child(5) > a`).attr("data-page", 2).parent(".page-item").removeClass("disabled");
+}
+
+function setPagination(id, {pageNum, prePage, nextPage, total}) {
+    if (total === 1) {
+        $(`#${id} .page-item:nth-child(3)`).addClass("hidden");
+        $(`#${id} .page-item:nth-child(4)`).addClass("hidden");
+    } else if (total === 2) {
+        $(`#${id} .page-item:nth-child(4)`).addClass("hidden");
+    }
+    // 先清除
+    $(`#${id} .page-item`).removeClass("active");
+    // 设置分页信息
+    if (pageNum >= 2 && pageNum <= total - 1) { // 此时需要将选中页码移动至中间
+        $(`#${id} .page-item:nth-child(3) > a`).attr("data-page", pageNum).text(pageNum);
+        $(`#${id} .page-item:nth-child(2) > a`).attr("data-page", prePage).text(prePage);
+        $(`#${id} .page-item:nth-child(1) > a`).attr("data-page", prePage).parent().removeClass("disabled");
+        if (nextPage !== 0) {
+            $(`#${id} .page-item:nth-child(4) > a`).attr("data-page", nextPage).text(nextPage).parent().removeClass("hidden");
+            $(`#${id} .page-item:nth-child(5) > a`).attr("data-page", nextPage).parent().removeClass("disabled");
+        } else {
+            $(`#${id} .page-item:nth-child(4)`).addClass("hidden");
+            $(`#${id} .page-item:nth-child(5)`).addClass("disabled");
+        }
+    } else { // 此时页码不需要移动
+        if (pageNum === total) {
+            if (prePage !== 0)
+                $(`#${id} .page-item:nth-child(1) > a`).attr("data-page", prePage).parent().removeClass("disabled");
+            $(`#${id} .page-item:nth-last-child(1)`).addClass("disabled");
+        }
+        if (pageNum === 1) {
+            $(`#${id} .page-item:nth-child(1)`).addClass("disabled");
+            if (nextPage !== 0) {
+                $(`#${id} .page-item:nth-child(3) > a`).removeClass("hidden").attr("data-page", nextPage).text(nextPage);
+                $(`#${id} .page-item:nth-last-child(1) > a`).attr("data-page", nextPage).parent().removeClass("disabled");
+            }
+        }
+    }
+    $(`#${id} .page-link[data-page=${pageNum}]`).parent(".page-item").addClass("active");
 }
 
 /**
@@ -553,7 +663,15 @@ function showExamineData(data) {
  */
 function showUserData(data) {
     $('#userTable tbody').html('');
-    data.forEach((item) => {
+    // 获取分页相关信息
+    const pageNum = data.pageNum; // 当前显示页
+    const prePage = data.prePage; // 前一页页码
+    const nextPage = data.nextPage; // 下一页页码
+    const total = data.pages; // 总页码
+
+    setPagination("userTable", {pageNum, prePage, nextPage, total});
+
+    data.list.forEach((item) => {
         const roles = item.roles;
         let role;
         if (roles.find(value => {
@@ -594,9 +712,6 @@ function showUserData(data) {
 
         $('#userTable tbody').append($tr);
     });
-    $('#ERTable').addClass('hidden');
-    $('#HTable').addClass('hidden');
-    $('#userTable').removeClass('hidden');
 }
 
 function showEditUserModal(user) {

@@ -1,5 +1,7 @@
 package whu.sres.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -124,6 +126,7 @@ public class UserController {
     @DeleteMapping("/delete")
     public String delete(@RequestParam String id) {
         userService.delete(id);
+        userService.deleteUserRoleByUserId(id);
         return new Result<String>().success(true).message("成功删除用户！").code(ResultCode.OK).toString();
     }
 
@@ -164,8 +167,10 @@ public class UserController {
 
     @VerifyToken(url = "/user/all")
     @GetMapping("/all")
-    public String getAll() {
-        List<User> users = userService.getAll();
-        return new Result<List<User>>().data(users).success(true).message("用户数据获取成功").code(ResultCode.OK).toString();
+    public String getAll(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        PageInfo<User> users = new PageInfo<>(userService.getAll());
+        return new Result<PageInfo<User>>().data(users).success(true).message("用户数据获取成功").code(ResultCode.OK).toString();
     }
 }
+

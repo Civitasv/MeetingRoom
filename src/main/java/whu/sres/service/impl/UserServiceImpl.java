@@ -91,6 +91,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int deleteUserRoleByUserId(String userId) {
+        return userRoleMapper.deleteUserRoleByUserId(userId);
+    }
+
+    @Override
     public List<UserRole> getRoleByUserId(String userId) {
         return userRoleMapper.getRoleByUserId(userId);
     }

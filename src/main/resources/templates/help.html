@@ -21,7 +21,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <style>
         body {
-            background-color: #eee;
+            background-color: #ffffff;
             width: 100%;
         }
 
@@ -37,7 +37,12 @@
 
 <div style="text-align:center; margin-top:2rem;">
     <h2>
-        <strong><span style="font-family:'Microsoft YaHei',serif;line-height:2;"><a href="index.html">会议室预订系统</a>  使用说明</span></strong>
+        <strong>
+            <span style="font-family:'Microsoft YaHei',serif;line-height:2;">
+                <a th:href="@{~/}">会议室预订系统</a>
+                使用说明
+            </span>
+        </strong>
     </h2>
 </div>
 
@@ -62,7 +67,7 @@
                         版本号：
                     </th>
                     <td>
-                        3.0.0
+                        4.0.0
                     </td>
                 </tr>
                 <tr>
@@ -98,7 +103,10 @@
                                 3.界面进行了一定程度上的优化；
                             </li>
                             <li class="list-unstyled">
-                                ４.本系统暂<span style="color:#e00;"><strong>不支持IE浏览器</strong></span>，谷歌浏览器和火狐浏览器均已通过测试。
+                                4.添加管理界面，大幅度修改UI；
+                            </li>
+                            <li class="list-unstyled">
+                                5.本系统暂<span style="color:#e00;"><strong>不支持IE浏览器</strong></span>，谷歌浏览器和火狐浏览器均已通过测试。
                             </li>
                         </ul>
                     </td>
@@ -112,7 +120,7 @@
     <div class="row center">
         <div class="col-6">
             <h4>预订流程</h4>
-            <ul>
+            <ul class="list-unstyled">
                 <li>
                     1.登录系统后，<strong>双击</strong>会议室和时间段对应的<strong>空格</strong>开始预订；
                 </li>
@@ -120,7 +128,10 @@
                     2.在预订页面填写联系人信息提交即可完成预订操作；
                 </li>
                 <li>
-                    3.在主页面点击自己的名字，可以进入个人管理页面，可以<strong>撤销会议室</strong>，查看<strong>历史预订记录</strong>；
+                    3.在主页面点击自己的名字，<b>普通用户</b>可以进入个人管理页面，可以<strong>撤销会议室</strong>，查看<strong>历史预订记录</strong>，修改<b>个人信息</b>；
+                </li>
+                <li>
+                    4.在主页面点击自己的名字，<b>管理员</b>可以进入个人管理页面，可以<strong>撤销会议室</strong>，查看<strong>历史预订记录</strong>，修改<b>个人信息</b>，同时支持<b>用户管理</b>和<b>预约的审核</b>；
                 </li>
 
             </ul>
@@ -130,7 +141,7 @@
         </div>
         <div class="col-5">
             <h4>情况说明</h4>
-            <ul>
+            <ul class="list-unstyled">
                 <li>
                     1. 220, 313, 320会议室钥匙请联系321办公室张老师；
                 </li>

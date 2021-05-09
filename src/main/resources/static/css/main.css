@@ -156,6 +156,7 @@
     cursor: pointer;
     color: #666666;
     transition: all .1s ease-in;
+    width: fit-content;
 }
 
 .styled-li:hover {

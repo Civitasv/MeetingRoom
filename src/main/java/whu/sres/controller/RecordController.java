@@ -1,5 +1,7 @@
 package whu.sres.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import whu.sres.authority.VerifyToken;
@@ -52,21 +54,24 @@ public class RecordController {
     }
 
     @GetMapping("/canRevoke")
-    public String canRevoke() {
-        List<Record> records = recordService.getRecordBeforeEndTimestamp(System.currentTimeMillis() / 1000);
-        return new Result<List<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
+    public String canRevoke(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        PageInfo<Record> records = new PageInfo<>(recordService.getRecordBeforeEndTimestamp(System.currentTimeMillis() / 1000));
+        return new Result<PageInfo<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 
     @GetMapping("/history")
-    public String getRecordByUserId(@RequestParam String id) {
-        List<Record> records = recordService.getRecordByUserId(id);
-        return new Result<List<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
+    public String getRecordByUserId(@RequestParam String id, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        PageInfo<Record> records = new PageInfo<>(recordService.getRecordByUserId(id));
+        return new Result<PageInfo<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 
     @GetMapping("/examine")
-    public String getExamineRecord() {
-        List<Record> records = recordService.getRecordByState(0);
-        return new Result<List<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
+    public String getExamineRecord(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        PageHelper.startPage(page, size);
+        PageInfo<Record> records = new PageInfo<>(recordService.getRecordByState(0));
+        return new Result<PageInfo<Record>>().data(records).success(true).message("数据获取成功").code(ResultCode.OK).toString();
     }
 
     @VerifyToken(url = "/record/update")

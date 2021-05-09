@@ -16,6 +16,12 @@
           and role_id = #{roleId}
     </delete>
 
+    <delete id="deleteUserRoleByUserId">
+        delete
+        from user_role
+        where user_id = #{userId}
+    </delete>
+
     <select id="getRoleByUserId" resultType="UserRole">
         select *
         from user_role
