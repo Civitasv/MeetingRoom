@@ -78,8 +78,8 @@ async function auth(toLogin, toLogout) {
             if (isLogin()) {
                 await logout();
                 toLogout();
-                toLogin();
             }
+            toLogin();
         }
     }
     const access_token = inMemoryToken;

@@ -363,21 +363,6 @@ async function syncLogout(event) {
         inMemoryToken = null; // 将token置空
         if (interval)
             endCountdown(); // 停止倒计时
-        const url = `${base}/user/logout`
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                credentials: 'include'
-            })
-            if (response.ok) {
-                const res = await response.json();
-                console.log(res.code !== 200 ? "退出失败" : "退出成功");
-            } else {
-                console.log(response.statusText)
-            }
-        } catch (e) {
-            console.log(e);
-        }
         loginModal.show();
     }
 }
