@@ -240,6 +240,35 @@ $(function () {
 });
 
 async function addUser(user) {
+    // 首先检查用户名是否可用
+    const repeatUrl = `${base}/user/repeat?userId=${user.id}`;
+    try {
+        const response = await fetch(repeatUrl, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            }
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                console.log(res.message);
+                alert("该用户ID已被注册！");
+                return;
+            }
+        } else {
+            console.log(response.statusText);
+            alert("该用户ID已被注册！");
+            return;
+        }
+    } catch (e) {
+        console.log(e);
+        alert("该用户ID已被注册！");
+        return;
+    }
     const url = `${base}/user/add`
     try {
         const response = await fetch(url, {

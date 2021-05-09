@@ -93,10 +93,10 @@ public class UserController {
         return new Result<Map<String, Object>>().success(true).message("退出成功").code(ResultCode.OK).toString();
     }
 
-    @PostMapping("/repeat")
-    public String repeat(@RequestBody String userId) {
+    @GetMapping("/repeat")
+    public String repeat(@RequestParam String userId) {
         User user = userService.getByUserId(userId);
-        if (!Objects.isNull(user)) {
+        if (Objects.isNull(user)) {
             return new Result<String>().success(true).message("该用户名可用！").code(ResultCode.OK).toString();
         } else {
             return new Result<String>().success(false).message("该用户名已被注册！").code(ResultCode.CONFLICT).toString();
