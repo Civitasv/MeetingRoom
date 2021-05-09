@@ -372,7 +372,7 @@ function toLogin() {
 }
 
 function toLogout() {
-    $('#toManage').empty().addClass('hidden');
+    $('#toManage').addClass('hidden');
     $('#btnLogin').removeClass('hidden');
     $('#btnLogout').addClass('hidden');
 }
