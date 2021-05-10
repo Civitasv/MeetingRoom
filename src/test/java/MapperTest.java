@@ -27,16 +27,6 @@ public class MapperTest {
 
     @Test
     public void test2() {
-        // System.out.println(meetingMapper.getRecordByUserId("111"));
-        User user = new User();
-        user.setName("test");
-        user.setId("XXX");
-        user.setPhone("1102");
-        user.setPassword("senmeng0921");
-        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
-        user.setPassword(encryptPwd);
-        int res = mapper.add(user);
-        System.out.println(res);
     }
 
     @Test
