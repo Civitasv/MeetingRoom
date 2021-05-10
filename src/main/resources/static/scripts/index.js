@@ -357,7 +357,7 @@ async function syncLogout(event) {
             return;
         }
         console.log('logged out from storage!')
-        $('#toManage').empty().addClass('hidden');
+        $('#toManage').addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
         inMemoryToken = null; // 将token置空
@@ -392,7 +392,7 @@ $(function () {
         alert("此功能还在开发中，敬请期待！");
     });
     $("#btnLogout").click(async () => {
-        $('#toManage').empty().addClass('hidden');
+        $('#toManage').addClass('hidden');
         $('#btnLogin').removeClass('hidden');
         $('#btnLogout').addClass('hidden');
         await logout();

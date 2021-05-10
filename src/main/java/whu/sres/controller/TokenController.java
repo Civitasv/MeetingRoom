@@ -35,20 +35,20 @@ public class TokenController {
     public String refresh(@CookieValue(value = "refresh_token", defaultValue = "") String refreshToken, HttpServletResponse response) {
         // 验证 refresh token
         if (refreshToken.isEmpty()) {
-            return new Result<Map<String, Object>>().success(true).message("token不可以为空").code(ResultCode.AUTH_NEED).toString();
+            return new Result<Map<String, Object>>().success(false).message("token不可以为空").code(ResultCode.AUTH_NEED).toString();
         }
         if (tokenService.isExpire(refreshToken)) {
-            return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
+            return new Result<Map<String, Object>>().success(false).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
         }
         // 获取userId
         String userId = tokenService.getUserIdFromToken(refreshToken);
         if (Objects.isNull(userId)) {
-            return new Result<Map<String, Object>>().success(true).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
+            return new Result<Map<String, Object>>().success(false).message("刷新token已经失效").code(ResultCode.AUTH_NEED).toString();
         }
         // 根据userId获取user
         User user = userService.getByUserId(userId);
         if (user == null) {
-            return new Result<Map<String, Object>>().success(true).message("用户不存在").code(ResultCode.NOT_FOUND).toString();
+            return new Result<Map<String, Object>>().success(false).message("用户不存在").code(ResultCode.NOT_FOUND).toString();
         }
         // 重新生成 access token 和 refresh token
         Map<String, Object> accessTokenInfo = tokenService.getAccessToken(user); // 获得access token

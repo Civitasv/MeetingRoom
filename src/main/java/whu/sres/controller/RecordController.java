@@ -41,7 +41,7 @@ public class RecordController {
     public String addRecord(@RequestBody Record record) {
         int res = recordService.add(record);
         if (res == -1) {
-            return new Result<String>().success(true).message("预约与已有预约冲突！").code(ResultCode.CONFLICT).toString();
+            return new Result<String>().success(false).message("预约与已有预约冲突！").code(ResultCode.CONFLICT).toString();
         }
         return new Result<String>().success(true).message("预定请求提交成功！").code(ResultCode.CREATED).toString();
     }
