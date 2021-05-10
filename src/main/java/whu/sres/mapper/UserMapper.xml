@@ -47,6 +47,12 @@
         where id = #{id}
     </update>
 
+    <update id="updatePwd">
+        update user
+        set password = #{password}
+        where id = #{id}
+    </update>
+
     <update id="updatePwdAndPhone">
         update user
         set password = #{password},

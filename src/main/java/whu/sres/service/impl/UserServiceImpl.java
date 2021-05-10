@@ -51,6 +51,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int updatePwd(User user) {
+        return mapper.updatePwd(user);
+    }
+
+    @Override
     public int updatePwdAndPhone(User user) {
         return mapper.updatePwdAndPhone(user);
     }

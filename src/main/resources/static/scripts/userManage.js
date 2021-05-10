@@ -1,4 +1,4 @@
-let addUserModal, editUserModal, deleteUserModal;
+let addUserModal, editUserModal, deleteUserModal, updateUserPwdModal;
 $(function () {
     auth(() => {
         location.href = `${base}`;
@@ -20,6 +20,7 @@ $(function () {
     addUserModal = new bootstrap.Modal(document.getElementById("addUserModal"), {});
     editUserModal = new bootstrap.Modal(document.getElementById("editUserModal"), {});
     deleteUserModal = new bootstrap.Modal(document.getElementById("deleteUserModal"), {});
+    updateUserPwdModal = new bootstrap.Modal(document.getElementById("updatePwdModal"), {});
 
     $("#revokeMR").click(async () => {
         $('#editPersonInfo').addClass('hidden');
@@ -120,8 +121,7 @@ $(function () {
             user = {
                 id: localStorage.getItem("login_user_id"),
                 password: password,
-                phone: phone,
-                name: localStorage.getItem("login_user")
+                phone: phone
             }
             await updatePwdAndPhone(user, () => {
                 alert("恭喜，信息修改成功！");
@@ -200,6 +200,15 @@ $(function () {
     $("#deleteUser").click(async () => {
         const userId = $("#deleteUserId").text();
         await deleteUser(userId);
+    });
+
+    $("#updateUserPwd").click(async () => {
+        const userId = $("#updateUserId").text();
+        const password = $("#updatePwd").val();
+        await updatePwd({
+            id: userId,
+            password: password,
+        });
     });
 
     $("#userTable .page-link").click(async function () {
@@ -369,6 +378,45 @@ async function deleteUser(userId) {
     } catch (e) {
         console.log(e);
         alert("删除用户失败！");
+    }
+}
+
+/**
+ * 更新用户密码
+ * @param user 用户数据
+ */
+async function updatePwd(user) {
+    const url = `${base}/user/updatePwd`
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                "Authorization": inMemoryToken["token"]
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            const res = await response.json();
+            if (res.code !== 200) {
+                console.log(res.message);
+                alert("更新用户密码失败！");
+                return;
+            }
+            alert("成功更新用户密码！");
+            // 模态框消失
+            updateUserPwdModal.hide();
+            // 重新展示用户数据
+            await getUserData($("#userTable .active>a").attr("data-page"), $("#userPerPageNum option:selected").attr("value"));
+        } else {
+            alert("更新用户密码失败！");
+            console.log(response.statusText)
+        }
+    } catch (e) {
+        alert("更新用户密码失败！");
+        console.log(e);
     }
 }
 
@@ -722,7 +770,10 @@ function showUserData(data) {
         const $a = $('<button type="button" class="btn btn-success" ><i class="fas fa-edit"></i></button>').attr("id", item.id);
         // 删除
         const $b = $('<button type="button" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>').attr("id", item.id);
-        $btnGroup.append($a).append($b);
+        // 更新密码
+        const $c = $('<button type="button" class="btn btn-secondary" ><i class="fas fa-key"></i></button>').attr("id", item.id);
+
+        $btnGroup.append($a).append($b).append($c);
 
         $a.click(() => {
             showEditUserModal({ // 编辑
@@ -736,6 +787,10 @@ function showUserData(data) {
         $b.click(() => {
             showDeleteUserModal(item.id);
         });
+
+        $c.click(() => {
+            showUpdatePwdModal(item.id);
+        })
 
         const $td = $('<td></td>').append($btnGroup);
         $tr.append($td);
@@ -757,6 +812,11 @@ function showDeleteUserModal(userId) {
     deleteUserModal.show();
 }
 
+function showUpdatePwdModal(userId) {
+    $("#updateUserId").text(userId);
+    updateUserPwdModal.show();
+}
+
 /**
  * 更新用户
  * @param user 用户数据
@@ -764,7 +824,7 @@ function showDeleteUserModal(userId) {
  * @param reject 失败
  */
 async function updatePwdAndPhone(user, resolve, reject) {
-    const url = `${base}/user/update`
+    const url = `${base}/user/updatePwdAndPhone`
     try {
         const response = await fetch(url, {
             method: 'PUT',

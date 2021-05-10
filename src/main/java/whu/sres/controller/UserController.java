@@ -130,7 +130,7 @@ public class UserController {
         return new Result<String>().success(true).message("成功删除用户！").code(ResultCode.OK).toString();
     }
 
-    @VerifyToken(url = "/user/update")
+    @VerifyToken(url = "/user/updateOther")
     @PutMapping("/update")
     public String update(@RequestBody User user) {
         // 更新用户
@@ -149,20 +149,29 @@ public class UserController {
         return new Result<String>().success(true).message("成功更新用户！").code(ResultCode.OK).toString();
     }
 
-    @VerifyToken(url = "/user/updatePwd")
+    @VerifyToken(url = "/user/updateOther")
     @PutMapping("/updatePwd")
     public String updatePwd(@RequestBody User user) {
+        String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
+        user.setPassword(encryptPwd);
+        userService.updatePwd(user);
+        return new Result<String>().success(true).message("成功更新用户密码！").code(ResultCode.OK).toString();
+    }
+
+    @VerifyToken(url = "/user/updateOwn")
+    @PutMapping("/updatePwdAndPhone")
+    public String updatePwdAndPhone(@RequestBody User user) {
         String encryptPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes(StandardCharsets.UTF_8));
         user.setPassword(encryptPwd);
         userService.updatePwdAndPhone(user);
         return new Result<String>().success(true).message("成功更新用户密码和手机号码！").code(ResultCode.OK).toString();
     }
 
-    @VerifyToken(url = "/user/updatePhone")
+    @VerifyToken(url = "/user/updateOwn")
     @PutMapping("/updatePhone")
     public String updatePhone(@RequestBody User user) {
         userService.updatePhone(user);
-        return new Result<String>().success(true).message("成功更新用户手机！").code(ResultCode.OK).toString();
+        return new Result<String>().success(true).message("成功更新用户手机号码！").code(ResultCode.OK).toString();
     }
 
     @VerifyToken(url = "/user/all")

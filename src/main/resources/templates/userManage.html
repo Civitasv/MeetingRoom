@@ -452,6 +452,36 @@
                     </div>
                 </div>
 
+                <div class="modal fade" id="updatePwdModal" tabindex="-1" aria-labelledby="updatePwdModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updatePwdModalLabel">更新用户<span id="updateUserId" class="text-decoration-underline"></span>密码
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="mb-3 row">
+                                        <div class="col-3">
+                                            <label class="col-form-label" for="updatePwd">新密码：</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control" type="password" id="updatePwd">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="updateUserPwd">更新</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog">
