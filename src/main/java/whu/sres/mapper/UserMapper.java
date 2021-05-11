@@ -19,6 +19,8 @@ public interface UserMapper {
 
     int updatePwd(User user);
 
+    int updateId(String id, String fill);
+
     int updatePwdAndPhone(User user);
 
     int updatePhone(User user);
