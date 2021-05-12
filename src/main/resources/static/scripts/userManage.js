@@ -699,7 +699,7 @@ function initPagination(id) {
 }
 
 function setPagination(id, {pageNum, prePage, nextPage, total}) {
-    if (total === 1) {
+    if (total === 0 || total === 1) {
         $(`#${id} .page-item:nth-child(3)`).addClass("hidden");
         $(`#${id} .page-item:nth-child(4)`).addClass("hidden");
     } else if (total === 2) {
