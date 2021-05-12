@@ -30,6 +30,7 @@ $(function () {
         $('#userTable').addClass('hidden');
         // 展示可以撤销的数据
         setCurrentPageTitle("撤销会议室");
+        initPagination("ERTable");
         await getCanRevokeData(1, $("#revokePerPageNum").val());
     });
 
@@ -41,6 +42,7 @@ $(function () {
         $('#userTable').addClass('hidden');
         // 展示预约历史数据
         setCurrentPageTitle("历史预订记录");
+        initPagination("HTable");
         await getHistoryData(1, $("#historyPerPageNum").val());
     })
 
@@ -52,6 +54,7 @@ $(function () {
         $('#userTable').addClass('hidden');
         // 展示管理员审核数据
         setCurrentPageTitle("预定审核");
+        initPagination("ERTable");
         await getExamineData(1, $("#revokePerPageNum").val());
     });
 
@@ -63,6 +66,7 @@ $(function () {
         $('#userTable').removeClass('hidden');
         // 展示所有用户
         setCurrentPageTitle("用户管理");
+        initPagination("userTable");
         await getUserData(1, $("#userPerPageNum").val());
     });
 
