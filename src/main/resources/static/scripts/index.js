@@ -48,6 +48,19 @@ const initTableRoom = function () {
 
     $("#content table td").dblclick(function () {
         if (inMemoryToken) {
+            // 设置参数
+            // 日期
+            const date = $("#selectDate").val();
+            // 会议室
+            const room = $(this).attr("id").substring(0, 3);
+            // 开始时间
+            const start = num2timeStr($(this).attr("time") / 60);
+            // 结束时间
+            const end = num2timeStr($(this).attr("time") / 60 + 60);
+            $("#bookingDate").val(date);
+            $("#bookingRoom").val(room);
+            $("#startTime").val(start);
+            $("#endTime").val(end);
             changeBookingDateOrRoom();
             bookModal.show();
         } else {
@@ -321,6 +334,7 @@ $("#toManage").click(() => {
 });
 
 function changeBookingDateOrRoom() {
+    console.log("changing")
     const time = dateStringToTimestamp($("#bookingDate").val());
     if (!time) return;
     const room = $("#bookingRoom option:selected").attr("value");

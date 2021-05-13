@@ -1,4 +1,15 @@
 let addUserModal, editUserModal, deleteUserModal, updateUserPwdModal;
+const roomObj = {
+    220: "220",
+    301: "301",
+    313: "313",
+    320: "320",
+    504: "504",
+    429: "电脑城429",
+    430: "电脑城430",
+    431: "电脑城431",
+    212: "新九教212"
+};
 $(function () {
     auth(() => {
         location.href = `${base}`;
@@ -602,7 +613,7 @@ function showRevokeTable(data) {
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
         $tr.append("<td>" + item.user.name + "</td>");
-        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + roomObj[item.room] + "</td>");
         $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
         $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
         $tr.append("<td>" + item.realUser + "</td>");
@@ -634,7 +645,7 @@ function showHistoryData(data) {
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
         $tr.append("<td>" + item.user.name + "</td>");
-        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + roomObj[item.room] + "</td>");
         $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
         $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
         $tr.append("<td>" + item.realUser + "</td>");
@@ -662,7 +673,7 @@ function showExamineData(data) {
         $tr.append("<th scope='row'>" + i + "</th>");
         $tr.append("<td>" + formatDateYYYYMMSS(timestampToDate(item.date)) + "</td>");
         $tr.append("<td>" + item.user.name + "</td>");
-        $tr.append("<td>" + item.room + "</td>");
+        $tr.append("<td>" + roomObj[item.room] + "</td>");
         $tr.append("<td>" + timestampToDateString(item.start) + "</td>");
         $tr.append("<td>" + timestampToDateString(item.end) + "</td>");
         $tr.append("<td>" + item.realUser + "</td>");
