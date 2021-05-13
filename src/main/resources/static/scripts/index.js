@@ -334,7 +334,6 @@ $("#toManage").click(() => {
 });
 
 function changeBookingDateOrRoom() {
-    console.log("changing")
     const time = dateStringToTimestamp($("#bookingDate").val());
     if (!time) return;
     const room = $("#bookingRoom option:selected").attr("value");
