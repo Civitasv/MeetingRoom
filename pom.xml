@@ -6,7 +6,7 @@
 
     <groupId>whu.sres</groupId>
     <artifactId>meetingroom</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.5</version>
     <packaging>jar</packaging>
     <name>meetingroom Maven Webapp</name>
     <!-- FIXME change it to the project's website -->
